@@ -1,2187 +1,633 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoSchool AI ULTIMATE v12.0</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <style>
-        /* ─── RESET & ROOT ─── */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box
-        }
-
-        :root {
-            --bg0: #060a1a;
-            --bg1: #0c1225;
-            --bg2: #111d35;
-            --bg3: #162440;
-            --bg4: #1c2d4a;
-            --t0: #fff;
-            --t1: #c8d6e5;
-            --t2: #8899aa;
-            --t3: #556677;
-            --cyan: #00e5ff;
-            --cyan2: rgba(0, 229, 255, .15);
-            --purple: #a78bfa;
-            --purple2: rgba(167, 139, 250, .15);
-            --green: #34d399;
-            --green2: rgba(52, 211, 153, .15);
-            --yellow: #fbbf24;
-            --yellow2: rgba(251, 191, 36, .15);
-            --red: #f87171;
-            --red2: rgba(248, 113, 113, .15);
-            --blue: #60a5fa;
-            --blue2: rgba(96, 165, 250, .15);
-            --orange: #fb923c;
-            --orange2: rgba(251, 146, 60, .15);
-            --font: 'Inter', sans-serif;
-            --fontD: 'Rajdhani', sans-serif;
-            --tr: .22s cubic-bezier(.4, 0, .2, 1);
-            --r: 10px;
-            --r2: 14px;
-        }
-
-        html,
-        body {
-            height: 100%;
-            overflow: hidden
-        }
-
-        body {
-            font-family: var(--font);
-            background: var(--bg0);
-            color: var(--t0);
-            font-size: 14px;
-            line-height: 1.5
-        }
-
-        /* ─── SCROLLBAR ─── */
-        ::-webkit-scrollbar {
-            width: 5px
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--bg4);
-            border-radius: 3px
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--t3)
-        }
-
-        /* ─── LAYOUT ─── */
-        .app {
-            display: flex;
-            height: 100vh
-        }
-
-        /* ═══════════ SIDEBAR ═══════════ */
-        .sidebar {
-            width: 240px;
-            background: var(--bg1);
-            border-right: 1px solid rgba(0, 229, 255, .08);
-            display: flex;
-            flex-direction: column;
-            flex-shrink: 0;
-            position: relative;
-            z-index: 10
-        }
-
-        .sidebar::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 1px;
-            height: 100%;
-            background: linear-gradient(180deg, transparent, var(--cyan), transparent);
-            opacity: .3
-        }
-
-        .brand {
-            padding: 1.4rem 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: .8rem;
-            border-bottom: 1px solid rgba(255, 255, 255, .04)
-        }
-
-        .brand-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 9px;
-            background: linear-gradient(135deg, var(--cyan), var(--purple));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            box-shadow: 0 4px 18px rgba(0, 229, 255, .3)
-        }
-
-        .brand-text h1 {
-            font-family: var(--fontD);
-            font-size: 17px;
-            font-weight: 700;
-            letter-spacing: .5px
-        }
-
-        .brand-text p {
-            font-size: 10px;
-            color: var(--t3);
-            text-transform: uppercase;
-            letter-spacing: 1px
-        }
-
-        .nav {
-            flex: 1;
-            overflow-y: auto;
-            padding: .8rem .7rem
-        }
-
-        .nav-label {
-            font-size: 9px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            color: var(--t3);
-            padding: 0 .6rem;
-            margin: .9rem 0 .4rem
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: .7rem;
-            padding: .55rem .75rem;
-            border-radius: 8px;
-            color: var(--t2);
-            cursor: pointer;
-            transition: var(--tr);
-            font-size: 13px;
-            font-weight: 500;
-            margin-bottom: 1px;
-            position: relative
-        }
-
-        .nav-item:hover {
-            background: var(--bg2);
-            color: var(--t0)
-        }
-
-        .nav-item.active {
-            background: linear-gradient(90deg, var(--cyan2), transparent);
-            color: var(--t0)
-        }
-
-        .nav-item.active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 20%;
-            bottom: 20%;
-            width: 3px;
-            background: var(--cyan);
-            border-radius: 0 3px 3px 0
-        }
-
-        .nav-item i {
-            width: 18px;
-            text-align: center;
-            font-size: 14px;
-            color: var(--t3)
-        }
-
-        .nav-item.active i {
-            color: var(--cyan)
-        }
-
-        .nav-item:hover i {
-            color: var(--t1)
-        }
-
-        .nav-badge {
-            margin-left: auto;
-            background: var(--red);
-            color: #fff;
-            font-size: 10px;
-            font-weight: 700;
-            padding: 1px 7px;
-            border-radius: 10px;
-            min-width: 20px;
-            text-align: center
-        }
-
-        .nav-badge.green {
-            background: var(--green)
-        }
-
-        .sidebar-foot {
-            padding: 1rem .7rem;
-            border-top: 1px solid rgba(255, 255, 255, .04)
-        }
-
-        .user-row {
-            display: flex;
-            align-items: center;
-            gap: .7rem;
-            padding: .5rem .75rem;
-            border-radius: 8px;
-            cursor: pointer
-        }
-
-        .user-row:hover {
-            background: var(--bg2)
-        }
-
-        .user-av {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--cyan), var(--purple));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px
-        }
-
-        .user-info {
-            flex: 1;
-            min-width: 0
-        }
-
-        .user-info strong {
-            font-size: 12px;
-            display: block
-        }
-
-        .user-info span {
-            font-size: 10px;
-            color: var(--t3)
-        }
-
-        /* ═══════════ MAIN ═══════════ */
-        .main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-            overflow: hidden
-        }
-
-        /* ─── TOPBAR ─── */
-        .topbar {
-            height: 56px;
-            background: var(--bg1);
-            border-bottom: 1px solid rgba(255, 255, 255, .04);
-            display: flex;
-            align-items: center;
-            padding: 0 1.5rem;
-            gap: 1rem;
-            flex-shrink: 0
-        }
-
-        .search-wrap {
-            flex: 1;
-            max-width: 420px;
-            position: relative
-        }
-
-        .search-wrap i {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--t3);
-            font-size: 13px
-        }
-
-        .search-wrap input {
-            width: 100%;
-            padding: .55rem 1rem .55rem 2.2rem;
-            background: var(--bg2);
-            border: 1px solid rgba(255, 255, 255, .06);
-            border-radius: var(--r);
-            color: var(--t0);
-            font-size: 13px;
-            transition: var(--tr)
-        }
-
-        .search-wrap input:focus {
-            outline: none;
-            border-color: var(--cyan);
-            background: var(--bg3)
-        }
-
-        .search-wrap input::placeholder {
-            color: var(--t3)
-        }
-
-        .search-dropdown {
-            position: absolute;
-            top: calc(100% + 6px);
-            left: 0;
-            right: 0;
-            background: var(--bg2);
-            border: 1px solid rgba(255, 255, 255, .08);
-            border-radius: var(--r);
-            max-height: 320px;
-            overflow-y: auto;
-            z-index: 100;
-            display: none
-        }
-
-        .search-dropdown.show {
-            display: block
-        }
-
-        .search-item {
-            padding: .7rem 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, .04);
-            cursor: pointer;
-            transition: var(--tr)
-        }
-
-        .search-item:hover {
-            background: var(--bg3)
-        }
-
-        .search-item .si-type {
-            font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--cyan);
-            font-weight: 700;
-            margin-bottom: 2px
-        }
-
-        .search-item .si-name {
-            font-size: 13px;
-            font-weight: 600
-        }
-
-        .search-item .si-sub {
-            font-size: 11px;
-            color: var(--t3)
-        }
-
-        .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: .6rem;
-            margin-left: auto
-        }
-
-        .lang-row {
-            display: flex;
-            background: var(--bg2);
-            border-radius: 6px;
-            padding: 2px;
-            gap: 2px
-        }
-
-        .lang-btn {
-            padding: .3rem .6rem;
-            border: none;
-            background: transparent;
-            color: var(--t3);
-            font-size: 11px;
-            font-weight: 600;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: var(--tr)
-        }
-
-        .lang-btn.active {
-            background: var(--cyan);
-            color: #000
-        }
-
-        .icon-btn {
-            width: 34px;
-            height: 34px;
-            border-radius: var(--r);
-            border: none;
-            background: var(--bg2);
-            color: var(--t2);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            transition: var(--tr)
-        }
-
-        .icon-btn:hover {
-            background: var(--bg3);
-            color: var(--t0)
-        }
-
-        /* ─── CONTENT ─── */
-        .content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1.5rem
-        }
-
-        /* ═══════════ PAGES ═══════════ */
-        .page {
-            display: none;
-            animation: fadeIn .25s ease
-        }
-
-        .page.active {
-            display: block
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(6px)
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0)
-            }
-        }
-
-        /* ─── PAGE HEADER ─── */
-        .page-hdr {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.4rem
-        }
-
-        .page-hdr h2 {
-            font-family: var(--fontD);
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: .3px
-        }
-
-        .page-hdr h2 i {
-            color: var(--cyan);
-            margin-right: .5rem
-        }
-
-        /* ═══════════ KPI GRID ═══════════ */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.4rem
-        }
-
-        .kpi {
-            background: var(--bg1);
-            border: 1px solid rgba(255, 255, 255, .05);
-            border-radius: var(--r2);
-            padding: 1.2rem;
-            position: relative;
-            overflow: hidden;
-            transition: var(--tr)
-        }
-
-        .kpi:hover {
-            border-color: rgba(255, 255, 255, .12);
-            transform: translateY(-2px)
-        }
-
-        .kpi-top {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between
-        }
-
-        .kpi-label {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--t2);
-            text-transform: uppercase;
-            letter-spacing: .6px
-        }
-
-        .kpi-ico {
-            width: 34px;
-            height: 34px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px
-        }
-
-        .kpi-val {
-            font-family: var(--fontD);
-            font-size: 32px;
-            font-weight: 700;
-            margin: 8px 0 4px;
-            letter-spacing: -.5px
-        }
-
-        .kpi-val .unit {
-            font-size: 15px;
-            font-weight: 500;
-            margin-left: 3px;
-            color: var(--t2)
-        }
-
-        .kpi-sub {
-            font-size: 11px;
-            color: var(--t3)
-        }
-
-        .kpi-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--cyan), var(--purple));
-            border-radius: 0 0 var(--r2) var(--r2)
-        }
-
-        /* ═══════════ PANEL ═══════════ */
-        .panel {
-            background: var(--bg1);
-            border: 1px solid rgba(255, 255, 255, .05);
-            border-radius: var(--r2);
-            margin-bottom: 1.2rem;
-            overflow: hidden
-        }
-
-        .panel-hdr {
-            padding: 1rem 1.3rem;
-            border-bottom: 1px solid rgba(255, 255, 255, .04);
-            display: flex;
-            align-items: center;
-            justify-content: space-between
-        }
-
-        .panel-title {
-            display: flex;
-            align-items: center;
-            gap: .6rem;
-            font-size: 14px;
-            font-weight: 600
-        }
-
-        .panel-title i {
-            color: var(--cyan)
-        }
-
-        .panel-body {
-            padding: 1.2rem 1.3rem
-        }
-
-        /* ═══════════ BUTTONS ═══════════ */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: .5rem;
-            padding: .5rem 1rem;
-            background: linear-gradient(135deg, var(--cyan), var(--purple));
-            color: #fff;
-            border: none;
-            border-radius: var(--r);
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--tr);
-            white-space: nowrap
-        }
-
-        .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(0, 229, 255, .25)
-        }
-
-        .btn:active {
-            transform: translateY(0)
-        }
-
-        .btn.sm {
-            padding: .35rem .7rem;
-            font-size: 11px
-        }
-
-        .btn.red {
-            background: linear-gradient(135deg, var(--red), #e11d48)
-        }
-
-        .btn.red:hover {
-            box-shadow: 0 6px 18px rgba(248, 113, 113, .3)
-        }
-
-        .btn.ghost {
-            background: transparent;
-            color: var(--t1);
-            border: 1px solid rgba(255, 255, 255, .1)
-        }
-
-        .btn.ghost:hover {
-            border-color: var(--cyan);
-            color: var(--cyan);
-            box-shadow: none
-        }
-
-        .btn.green-btn {
-            background: linear-gradient(135deg, var(--green), #059669)
-        }
-
-        .btn.green-btn:hover {
-            box-shadow: 0 6px 18px rgba(52, 211, 153, .3)
-        }
-
-        /* ═══════════ ROOM CARDS ═══════════ */
-        .room-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-            gap: 1rem
-        }
-
-        .room-card {
-            background: var(--bg2);
-            border: 1px solid rgba(255, 255, 255, .06);
-            border-radius: var(--r2);
-            padding: 1.1rem;
-            transition: var(--tr);
-            position: relative
-        }
-
-        .room-card:hover {
-            border-color: var(--cyan);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, .3)
-        }
-
-        .rc-hdr {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: .8rem
-        }
-
-        .rc-name {
-            font-weight: 700;
-            font-size: 14px
-        }
-
-        .rc-status {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--green);
-            box-shadow: 0 0 6px var(--green)
-        }
-
-        .rc-status.off {
-            background: var(--t3);
-            box-shadow: none
-        }
-
-        .rc-metrics {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: .6rem
-        }
-
-        .rc-m .rc-ml {
-            font-size: 9px;
-            color: var(--t3);
-            text-transform: uppercase;
-            letter-spacing: .5px;
-            margin-bottom: 1px
-        }
-
-        .rc-m .rc-mv {
-            font-size: 15px;
-            font-weight: 700
-        }
-
-        .rc-actions {
-            display: flex;
-            gap: .5rem;
-            margin-top: .9rem;
-            flex-wrap: wrap
-        }
-
-        .rc-actions .btn {
-            flex: 1;
-            justify-content: center;
-            min-width: 0
-        }
-
-        /* ═══════════ SENSOR TABLE ═══════════ */
-        .s-table {
-            width: 100%;
-            border-collapse: collapse
-        }
-
-        .s-table th {
-            text-align: left;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: .8px;
-            color: var(--t3);
-            padding: .6rem .8rem;
-            border-bottom: 1px solid rgba(255, 255, 255, .06)
-        }
-
-        .s-table td {
-            padding: .65rem .8rem;
-            border-bottom: 1px solid rgba(255, 255, 255, .03);
-            font-size: 13px
-        }
-
-        .s-table tr:hover td {
-            background: rgba(255, 255, 255, .02)
-        }
-
-        .s-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 3px 9px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600
-        }
-
-        .chip-green {
-            background: var(--green2);
-            color: var(--green)
-        }
-
-        .chip-yellow {
-            background: var(--yellow2);
-            color: var(--yellow)
-        }
-
-        .chip-red {
-            background: var(--red2);
-            color: var(--red)
-        }
-
-        .chip-blue {
-            background: var(--blue2);
-            color: var(--blue)
-        }
-
-        .chip-cyan {
-            background: var(--cyan2);
-            color: var(--cyan)
-        }
-
-        .chip-purple {
-            background: var(--purple2);
-            color: var(--purple)
-        }
-
-        .chip-orange {
-            background: var(--orange2);
-            color: var(--orange)
-        }
-
-        .chip-gray {
-            background: rgba(255, 255, 255, .06);
-            color: var(--t2)
-        }
-
-        /* ═══════════ DEVICE CARDS ═══════════ */
-        .device-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem
-        }
-
-        .dev-card {
-            background: var(--bg2);
-            border: 1px solid rgba(255, 255, 255, .06);
-            border-radius: var(--r2);
-            padding: 1.1rem;
-            transition: var(--tr)
-        }
-
-        .dev-card:hover {
-            border-color: rgba(255, 255, 255, .15)
-        }
-
-        .dev-card.on {
-            border-color: var(--green)
-        }
-
-        .dev-hdr {
-            display: flex;
-            align-items: center;
-            gap: .6rem;
-            margin-bottom: .8rem
-        }
-
-        .dev-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px
-        }
-
-        .dev-info strong {
-            display: block;
-            font-size: 13px
-        }
-
-        .dev-info span {
-            font-size: 11px;
-            color: var(--t3)
-        }
-
-        .dev-toggle {
-            display: flex;
-            gap: .4rem;
-            margin-top: .8rem
-        }
-
-        .dev-toggle .btn {
-            flex: 1;
-            justify-content: center;
-            padding: .4rem .5rem;
-            font-size: 11px
-        }
-
-        /* ═══════════ AI AGENTS ═══════════ */
-        .agent-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: .8rem
-        }
-
-        .agent-card {
-            background: var(--bg2);
-            border: 1px solid rgba(255, 255, 255, .05);
-            border-radius: var(--r);
-            padding: .9rem;
-            display: flex;
-            align-items: center;
-            gap: .75rem;
-            transition: var(--tr)
-        }
-
-        .agent-card:hover {
-            border-color: rgba(255, 255, 255, .12)
-        }
-
-        .agent-card.active-agent {
-            border-color: rgba(52, 211, 153, .25)
-        }
-
-        .agent-dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: var(--green);
-            box-shadow: 0 0 8px var(--green);
-            animation: pulse 2s infinite
-        }
-
-        .agent-dot.idle {
-            background: var(--t3);
-            box-shadow: none;
-            animation: none
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 1
-            }
-
-            50% {
-                opacity: .4
-            }
-        }
-
-        .agent-num {
-            font-family: var(--fontD);
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--t3);
-            width: 22px;
-            text-align: center
-        }
-
-        .agent-info strong {
-            display: block;
-            font-size: 12px;
-            font-weight: 600
-        }
-
-        .agent-info span {
-            font-size: 10px;
-            color: var(--t3)
-        }
-
-        .agent-decisions {
-            margin-left: auto;
-            font-size: 11px;
-            color: var(--cyan);
-            font-weight: 600
-        }
-
-        /* ═══════════ ALERTS ═══════════ */
-        .alert-item {
-            display: flex;
-            gap: 1rem;
-            padding: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, .04);
-            align-items: flex-start
-        }
-
-        .alert-item:last-child {
-            border-bottom: none
-        }
-
-        .alert-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            flex-shrink: 0
-        }
-
-        .alert-body {
-            flex: 1;
-            min-width: 0
-        }
-
-        .alert-body strong {
-            display: block;
-            font-size: 13px;
-            margin-bottom: 2px
-        }
-
-        .alert-body p {
-            font-size: 12px;
-            color: var(--t2)
-        }
-
-        .alert-meta {
-            font-size: 10px;
-            color: var(--t3);
-            margin-top: 3px
-        }
-
-        .alert-actions {
-            display: flex;
-            gap: .4rem
-        }
-
-        /* ═══════════ DECISIONS FEED ═══════════ */
-        .dec-item {
-            padding: .85rem 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, .03);
-            display: flex;
-            gap: .8rem;
-            align-items: flex-start
-        }
-
-        .dec-item:last-child {
-            border-bottom: none
-        }
-
-        .dec-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-top: 5px;
-            flex-shrink: 0
-        }
-
-        .dec-body {
-            flex: 1
-        }
-
-        .dec-agent {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--cyan)
-        }
-
-        .dec-text {
-            font-size: 12px;
-            color: var(--t2);
-            margin-top: 2px
-        }
-
-        .dec-conf {
-            font-size: 10px;
-            color: var(--t3);
-            margin-top: 3px
-        }
-
-        .dec-conf span {
-            color: var(--green);
-            font-weight: 600
-        }
-
-        /* ═══════════ CHARTS ═══════════ */
-        .chart-wrap {
-            position: relative;
-            height: 240px;
-            margin-top: .6rem
-        }
-
-        .charts-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem
-        }
-
-        @media(max-width:900px) {
-            .charts-2 {
-                grid-template-columns: 1fr
-            }
-        }
-
-        /* ═══════════ MODAL ═══════════ */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, .65);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            backdrop-filter: blur(4px)
-        }
-
-        .modal-overlay.show {
-            display: flex
-        }
-
-        .modal {
-            background: var(--bg1);
-            border: 1px solid rgba(255, 255, 255, .08);
-            border-radius: 16px;
-            width: 90%;
-            max-width: 520px;
-            max-height: 85vh;
-            overflow-y: auto;
-            animation: modalIn .2s ease
-        }
-
-        .modal.wide {
-            max-width: 780px
-        }
-
-        @keyframes modalIn {
-            from {
-                opacity: 0;
-                transform: scale(.94)
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1)
-            }
-        }
-
-        .modal-hdr {
-            padding: 1.3rem 1.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, .05);
-            display: flex;
-            align-items: center;
-            justify-content: space-between
-        }
-
-        .modal-hdr h3 {
-            font-size: 17px;
-            font-weight: 700
-        }
-
-        .modal-body {
-            padding: 1.5rem
-        }
-
-        /* ─── FORM ─── */
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem
-        }
-
-        .fg {
-            margin-bottom: 1rem
-        }
-
-        .fg label {
-            display: block;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--t2);
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: .5px
-        }
-
-        .fg input,
-        .fg select {
-            width: 100%;
-            padding: .58rem .85rem;
-            background: var(--bg2);
-            border: 1px solid rgba(255, 255, 255, .08);
-            border-radius: var(--r);
-            color: var(--t0);
-            font-size: 13px;
-            transition: var(--tr)
-        }
-
-        .fg input:focus,
-        .fg select:focus {
-            outline: none;
-            border-color: var(--cyan)
-        }
-
-        .fg select option {
-            background: var(--bg2);
-            color: var(--t0)
-        }
-
-        .form-actions {
-            display: flex;
-            gap: .6rem;
-            margin-top: 1.2rem
-        }
-
-        .form-actions .btn {
-            flex: 1;
-            justify-content: center
-        }
-
-        /* ═══════════ CHAT ═══════════ */
-        .chat-fab {
-            position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
-            width: 52px;
-            height: 52px;
-            background: linear-gradient(135deg, var(--cyan), var(--purple));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 1000;
-            box-shadow: 0 8px 24px rgba(0, 229, 255, .35);
-            transition: var(--tr)
-        }
-
-        .chat-fab:hover {
-            transform: scale(1.08)
-        }
-
-        .chat-fab i {
-            font-size: 20px;
-            color: #fff
-        }
-
-        .chat-fab .chat-badge {
-            position: absolute;
-            top: -2px;
-            right: -2px;
-            width: 18px;
-            height: 18px;
-            background: var(--red);
-            border-radius: 50%;
-            font-size: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            border: 2px solid var(--bg0)
-        }
-
-        .chat-box {
-            position: fixed;
-            bottom: 90px;
-            right: 1.5rem;
-            width: 440px;
-            height: 680px;
-            background: var(--bg1);
-            border: 1px solid rgba(255, 255, 255, .1);
-            border-radius: 20px;
-            display: none;
-            flex-direction: column;
-            z-index: 999;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
-            animation: chatIn .25s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: hidden
-        }
-
-        .chat-box.show {
-            display: flex
-        }
-
-        @keyframes chatIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px)
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0)
-            }
-        }
-
-        .chat-hdr {
-            padding: 1rem 1.2rem;
-            border-bottom: 1px solid rgba(255, 255, 255, .06);
-            display: flex;
-            align-items: center;
-            gap: .7rem
-        }
-
-        .chat-hdr .ch-av {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--cyan), var(--purple));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px
-        }
-
-        .chat-hdr .ch-info strong {
-            display: block;
-            font-size: 13px
-        }
-
-        .chat-hdr .ch-info span {
-            font-size: 10px;
-            color: var(--green)
-        }
-
-        .chat-hdr .ch-close {
-            margin-left: auto;
-            background: none;
-            border: none;
-            color: var(--t3);
-            cursor: pointer;
-            font-size: 16px
-        }
-
-        .chat-hdr .ch-close:hover {
-            color: var(--t0)
-        }
-
-        .chat-msgs {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: .7rem
-        }
-
-        .msg {
-            display: flex;
-            gap: .5rem;
-            max-width: 88%
-        }
-
-        .msg.user {
-            align-self: flex-end;
-            flex-direction: row-reverse
-        }
-
-        .msg-av {
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            flex-shrink: 0
-        }
-
-        .msg-av.ai {
-            background: linear-gradient(135deg, var(--cyan), var(--purple))
-        }
-
-        .msg-av.usr {
-            background: var(--bg3)
-        }
-
-        .msg-bubble {
-            padding: .6rem .85rem;
-            border-radius: 12px;
-            font-size: 13px;
-            line-height: 1.5
-        }
-
-        .msg.ai .msg-bubble {
-            background: var(--bg2);
-            color: var(--t0)
-        }
-
-        .msg.user .msg-bubble {
-            background: linear-gradient(135deg, var(--cyan), var(--purple));
-            color: #fff
-        }
-
-        .msg-time {
-            font-size: 9px;
-            color: var(--t3);
-            margin-top: 2px;
-            text-align: right
-        }
-
-        .msg.ai .msg-time {
-            text-align: left
-        }
-
-        .chat-input-wrap {
-            padding: .8rem 1rem;
-            border-top: 1px solid rgba(255, 255, 255, .06)
-        }
-
-        .chat-input-row {
-            display: flex;
-            gap: .5rem
-        }
-
-        .chat-input-row input {
-            flex: 1;
-            padding: .55rem .8rem;
-            background: var(--bg2);
-            border: 1px solid rgba(255, 255, 255, .06);
-            border-radius: var(--r);
-            color: var(--t0);
-            font-size: 13px
-        }
-
-        .chat-input-row input:focus {
-            outline: none;
-            border-color: var(--cyan)
-        }
-
-        .chat-send {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: none;
-            background: linear-gradient(135deg, var(--cyan), var(--purple));
-            color: #fff;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            transition: var(--tr)
-        }
-
-        .chat-send:hover {
-            transform: scale(1.1)
-        }
-
-        /* ═══════════ EMPTY STATE ═══════════ */
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: var(--t3)
-        }
-
-        .empty-state i {
-            font-size: 40px;
-            opacity: .3;
-            margin-bottom: 1rem;
-            display: block
-        }
-
-        .empty-state h4 {
-            font-size: 15px;
-            color: var(--t2);
-            margin-bottom: .3rem
-        }
-
-        .empty-state p {
-            font-size: 12px
-        }
-
-        /* ═══════════ CONFIRM DIALOG ═══════════ */
-        .confirm-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, .6);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 3000
-        }
-
-        .confirm-overlay.show {
-            display: flex
-        }
-
-        .confirm-box {
-            background: var(--bg1);
-            border: 1px solid rgba(255, 255, 255, .1);
-            border-radius: 14px;
-            padding: 1.8rem;
-            max-width: 400px;
-            width: 90%;
-            text-align: center
-        }
-
-        .confirm-box i {
-            font-size: 32px;
-            color: var(--red);
-            margin-bottom: .8rem
-        }
-
-        .confirm-box h3 {
-            font-size: 16px;
-            margin-bottom: .5rem
-        }
-
-        .confirm-box p {
-            font-size: 13px;
-            color: var(--t2);
-            margin-bottom: 1.2rem
-        }
-
-        .confirm-btns {
-            display: flex;
-            gap: .6rem;
-            justify-content: center
-        }
-
-        /* ═══════════ TOAST ═══════════ */
-        .toast-wrap {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            z-index: 5000;
-            display: flex;
-            flex-direction: column;
-            gap: .5rem
-        }
-
-        .toast {
-            background: var(--bg2);
-            border: 1px solid rgba(255, 255, 255, .1);
-            border-radius: var(--r);
-            padding: .65rem 1rem;
-            display: flex;
-            align-items: center;
-            gap: .6rem;
-            font-size: 13px;
-            animation: toastIn .25s ease;
-            min-width: 240px
-        }
-
-        .toast.success {
-            border-color: var(--green);
-            color: var(--green)
-        }
-
-        .toast.error {
-            border-color: var(--red);
-            color: var(--red)
-        }
-
-        .toast.info {
-            border-color: var(--cyan);
-            color: var(--cyan)
-        }
-
-        @keyframes toastIn {
-            from {
-                opacity: 0;
-                transform: translateX(40px)
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(0)
-            }
-        }
-
-        /* ═══════════ LOADING SPINNER ═══════════ */
-        .spinner {
-            width: 18px;
-            height: 18px;
-            border: 2px solid var(--bg3);
-            border-top-color: var(--cyan);
-            border-radius: 50%;
-            animation: spin .5s linear infinite
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg)
-            }
-        }
-
-        /* ═══════════ ROOM ANALYTICS MODAL SPECIFICS ═══════════ */
-        .ra-kpis {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: .7rem;
-            margin-bottom: 1rem
-        }
-
-        .ra-kpi {
-            background: var(--bg2);
-            border-radius: var(--r);
-            padding: .8rem;
-            text-align: center
-        }
-
-        .ra-kpi .ra-v {
-            font-family: var(--fontD);
-            font-size: 24px;
-            font-weight: 700
-        }
-
-        .ra-kpi .ra-l {
-            font-size: 10px;
-            color: var(--t3);
-            text-transform: uppercase;
-            letter-spacing: .5px;
-            margin-top: 2px
-        }
-
-        .ra-recs {
-            margin-top: 1rem
-        }
-
-        .ra-rec {
-            display: flex;
-            align-items: center;
-            gap: .5rem;
-            padding: .55rem .8rem;
-            background: var(--yellow2);
-            border-radius: 8px;
-            margin-bottom: .4rem;
-            font-size: 12px;
-            color: var(--yellow)
-        }
-
-        .ra-rec i {
-            font-size: 13px
-        }
-
-        /* ═══════════ WS STATUS ═══════════ */
-        .ws-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: var(--green);
-            box-shadow: 0 0 5px var(--green);
-            margin-right: 6px;
-            display: inline-block
-        }
-
-        .ws-dot.off {
-            background: var(--red);
-            box-shadow: 0 0 5px var(--red)
-        }
-
-        /* ═══════════ RESPONSIVE ═══════════ */
-        @media(max-width:700px) {
-            .sidebar {
-                display: none
-            }
-
-            .charts-2 {
-                grid-template-columns: 1fr
-            }
-
-            .ra-kpis {
-                grid-template-columns: 1fr 1fr
-            }
-
-            .chat-box {
-                width: calc(100vw - 2rem);
-                right: 1rem
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcoSchool AI ULTIMATE v12.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* ─── RESET & ROOT ─── */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg0:#060a1a;--bg1:#0c1225;--bg2:#111d35;--bg3:#162440;--bg4:#1c2d4a;
+  --t0:#fff;--t1:#c8d6e5;--t2:#8899aa;--t3:#556677;
+  --cyan:#00e5ff;--cyan2:rgba(0,229,255,.15);
+  --purple:#a78bfa;--purple2:rgba(167,139,250,.15);
+  --green:#34d399;--green2:rgba(52,211,153,.15);
+  --yellow:#fbbf24;--yellow2:rgba(251,191,36,.15);
+  --red:#f87171;--red2:rgba(248,113,113,.15);
+  --blue:#60a5fa;--blue2:rgba(96,165,250,.15);
+  --orange:#fb923c;--orange2:rgba(251,146,60,.15);
+  --font:'Inter',sans-serif;--fontD:'Rajdhani',sans-serif;
+  --tr:.22s cubic-bezier(.4,0,.2,1);
+  --r:10px;--r2:14px;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--bg0);color:var(--t0);font-size:14px;line-height:1.5}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--t3)}
+
+/* ─── LAYOUT ─── */
+.app{display:flex;height:100vh}
+
+/* ═══════════ SIDEBAR ═══════════ */
+.sidebar{width:240px;background:var(--bg1);border-right:1px solid rgba(0,229,255,.08);display:flex;flex-direction:column;flex-shrink:0;position:relative;z-index:10}
+.sidebar::after{content:'';position:absolute;top:0;right:0;width:1px;height:100%;background:linear-gradient(180deg,transparent,var(--cyan),transparent);opacity:.3}
+
+.brand{padding:1.4rem 1.2rem;display:flex;align-items:center;gap:.8rem;border-bottom:1px solid rgba(255,255,255,.04)}
+.brand-icon{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 18px rgba(0,229,255,.3)}
+.brand-text h1{font-family:var(--fontD);font-size:17px;font-weight:700;letter-spacing:.5px}
+.brand-text p{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px}
+
+.nav{flex:1;overflow-y:auto;padding:.8rem .7rem}
+.nav-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--t3);padding:0 .6rem;margin:.9rem 0 .4rem}
+.nav-item{display:flex;align-items:center;gap:.7rem;padding:.55rem .75rem;border-radius:8px;color:var(--t2);cursor:pointer;transition:var(--tr);font-size:13px;font-weight:500;margin-bottom:1px;position:relative}
+.nav-item:hover{background:var(--bg2);color:var(--t0)}
+.nav-item.active{background:linear-gradient(90deg,var(--cyan2),transparent);color:var(--t0)}
+.nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--cyan);border-radius:0 3px 3px 0}
+.nav-item i{width:18px;text-align:center;font-size:14px;color:var(--t3)}
+.nav-item.active i{color:var(--cyan)}
+.nav-item:hover i{color:var(--t1)}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;min-width:20px;text-align:center}
+.nav-badge.green{background:var(--green)}
+
+.sidebar-foot{padding:1rem .7rem;border-top:1px solid rgba(255,255,255,.04)}
+.user-row{display:flex;align-items:center;gap:.7rem;padding:.5rem .75rem;border-radius:8px;cursor:pointer}
+.user-row:hover{background:var(--bg2)}
+.user-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-size:13px}
+.user-info{flex:1;min-width:0}
+.user-info strong{font-size:12px;display:block}
+.user-info span{font-size:10px;color:var(--t3)}
+
+/* ═══════════ MAIN ═══════════ */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+
+/* ─── TOPBAR ─── */
+.topbar{height:56px;background:var(--bg1);border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;padding:0 1.5rem;gap:1rem;flex-shrink:0}
+.search-wrap{flex:1;max-width:420px;position:relative}
+.search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:13px}
+.search-wrap input{width:100%;padding:.55rem 1rem .55rem 2.2rem;background:var(--bg2);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);color:var(--t0);font-size:13px;transition:var(--tr)}
+.search-wrap input:focus{outline:none;border-color:var(--cyan);background:var(--bg3)}
+.search-wrap input::placeholder{color:var(--t3)}
+.search-dropdown{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--bg2);border:1px solid rgba(255,255,255,.08);border-radius:var(--r);max-height:320px;overflow-y:auto;z-index:100;display:none}
+.search-dropdown.show{display:block}
+.search-item{padding:.7rem 1rem;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:var(--tr)}
+.search-item:hover{background:var(--bg3)}
+.search-item .si-type{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--cyan);font-weight:700;margin-bottom:2px}
+.search-item .si-name{font-size:13px;font-weight:600}
+.search-item .si-sub{font-size:11px;color:var(--t3)}
+
+.topbar-right{display:flex;align-items:center;gap:.6rem;margin-left:auto}
+.lang-row{display:flex;background:var(--bg2);border-radius:6px;padding:2px;gap:2px}
+.lang-btn{padding:.3rem .6rem;border:none;background:transparent;color:var(--t3);font-size:11px;font-weight:600;border-radius:5px;cursor:pointer;transition:var(--tr)}
+.lang-btn.active{background:var(--cyan);color:#000}
+.icon-btn{width:34px;height:34px;border-radius:var(--r);border:none;background:var(--bg2);color:var(--t2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:var(--tr)}
+.icon-btn:hover{background:var(--bg3);color:var(--t0)}
+
+/* ─── CONTENT ─── */
+.content{flex:1;overflow-y:auto;padding:1.5rem}
+
+/* ═══════════ PAGES ═══════════ */
+.page{display:none;animation:fadeIn .25s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── PAGE HEADER ─── */
+.page-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem}
+.page-hdr h2{font-family:var(--fontD);font-size:22px;font-weight:700;letter-spacing:.3px}
+.page-hdr h2 i{color:var(--cyan);margin-right:.5rem}
+
+/* ═══════════ KPI GRID ═══════════ */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1.4rem}
+.kpi{background:var(--bg1);border:1px solid rgba(255,255,255,.05);border-radius:var(--r2);padding:1.2rem;position:relative;overflow:hidden;transition:var(--tr)}
+.kpi:hover{border-color:rgba(255,255,255,.12);transform:translateY(-2px)}
+.kpi-top{display:flex;align-items:flex-start;justify-content:space-between}
+.kpi-label{font-size:11px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.6px}
+.kpi-ico{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.kpi-val{font-family:var(--fontD);font-size:32px;font-weight:700;margin:8px 0 4px;letter-spacing:-.5px}
+.kpi-val .unit{font-size:15px;font-weight:500;margin-left:3px;color:var(--t2)}
+.kpi-sub{font-size:11px;color:var(--t3)}
+.kpi-bar{position:absolute;bottom:0;left:0;height:3px;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:0 0 var(--r2) var(--r2)}
+
+/* ═══════════ PANEL ═══════════ */
+.panel{background:var(--bg1);border:1px solid rgba(255,255,255,.05);border-radius:var(--r2);margin-bottom:1.2rem;overflow:hidden}
+.panel-hdr{padding:1rem 1.3rem;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;justify-content:space-between}
+.panel-title{display:flex;align-items:center;gap:.6rem;font-size:14px;font-weight:600}
+.panel-title i{color:var(--cyan)}
+.panel-body{padding:1.2rem 1.3rem}
+
+/* ═══════════ BUTTONS ═══════════ */
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.5rem 1rem;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#fff;border:none;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;transition:var(--tr);white-space:nowrap}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,229,255,.25)}
+.btn:active{transform:translateY(0)}
+.btn.sm{padding:.35rem .7rem;font-size:11px}
+.btn.red{background:linear-gradient(135deg,var(--red),#e11d48)}
+.btn.red:hover{box-shadow:0 6px 18px rgba(248,113,113,.3)}
+.btn.ghost{background:transparent;color:var(--t1);border:1px solid rgba(255,255,255,.1)}
+.btn.ghost:hover{border-color:var(--cyan);color:var(--cyan);box-shadow:none}
+.btn.green-btn{background:linear-gradient(135deg,var(--green),#059669)}
+.btn.green-btn:hover{box-shadow:0 6px 18px rgba(52,211,153,.3)}
+
+/* ═══════════ ROOM CARDS ═══════════ */
+.room-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem}
+.room-card{background:var(--bg2);border:1px solid rgba(255,255,255,.06);border-radius:var(--r2);padding:1.1rem;transition:var(--tr);position:relative}
+.room-card:hover{border-color:var(--cyan);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.rc-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem}
+.rc-name{font-weight:700;font-size:14px}
+.rc-status{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green)}
+.rc-status.off{background:var(--t3);box-shadow:none}
+.rc-metrics{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.rc-m .rc-ml{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:1px}
+.rc-m .rc-mv{font-size:15px;font-weight:700}
+.rc-actions{display:flex;gap:.5rem;margin-top:.9rem;flex-wrap:wrap}
+.rc-actions .btn{flex:1;justify-content:center;min-width:0}
+
+/* ═══════════ SENSOR TABLE ═══════════ */
+.s-table{width:100%;border-collapse:collapse}
+.s-table th{text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);padding:.6rem .8rem;border-bottom:1px solid rgba(255,255,255,.06)}
+.s-table td{padding:.65rem .8rem;border-bottom:1px solid rgba(255,255,255,.03);font-size:13px}
+.s-table tr:hover td{background:rgba(255,255,255,.02)}
+.s-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.chip-green{background:var(--green2);color:var(--green)}
+.chip-yellow{background:var(--yellow2);color:var(--yellow)}
+.chip-red{background:var(--red2);color:var(--red)}
+.chip-blue{background:var(--blue2);color:var(--blue)}
+.chip-cyan{background:var(--cyan2);color:var(--cyan)}
+.chip-purple{background:var(--purple2);color:var(--purple)}
+.chip-orange{background:var(--orange2);color:var(--orange)}
+.chip-gray{background:rgba(255,255,255,.06);color:var(--t2)}
+
+/* ═══════════ DEVICE CARDS ═══════════ */
+.device-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem}
+.dev-card{background:var(--bg2);border:1px solid rgba(255,255,255,.06);border-radius:var(--r2);padding:1.1rem;transition:var(--tr)}
+.dev-card:hover{border-color:rgba(255,255,255,.15)}
+.dev-card.on{border-color:var(--green)}
+.dev-hdr{display:flex;align-items:center;gap:.6rem;margin-bottom:.8rem}
+.dev-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.dev-info strong{display:block;font-size:13px}
+.dev-info span{font-size:11px;color:var(--t3)}
+.dev-toggle{display:flex;gap:.4rem;margin-top:.8rem}
+.dev-toggle .btn{flex:1;justify-content:center;padding:.4rem .5rem;font-size:11px}
+
+/* ═══════════ AI AGENTS ═══════════ */
+.agent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.8rem}
+.agent-card{background:var(--bg2);border:1px solid rgba(255,255,255,.05);border-radius:var(--r);padding:.9rem;display:flex;align-items:center;gap:.75rem;transition:var(--tr)}
+.agent-card:hover{border-color:rgba(255,255,255,.12)}
+.agent-card.active-agent{border-color:rgba(52,211,153,.25)}
+.agent-dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite}
+.agent-dot.idle{background:var(--t3);box-shadow:none;animation:none}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.agent-num{font-family:var(--fontD);font-size:18px;font-weight:700;color:var(--t3);width:22px;text-align:center}
+.agent-info strong{display:block;font-size:12px;font-weight:600}
+.agent-info span{font-size:10px;color:var(--t3)}
+.agent-decisions{margin-left:auto;font-size:11px;color:var(--cyan);font-weight:600}
+
+/* ═══════════ ALERTS ═══════════ */
+.alert-item{display:flex;gap:1rem;padding:1rem;border-bottom:1px solid rgba(255,255,255,.04);align-items:flex-start}
+.alert-item:last-child{border-bottom:none}
+.alert-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.alert-body{flex:1;min-width:0}
+.alert-body strong{display:block;font-size:13px;margin-bottom:2px}
+.alert-body p{font-size:12px;color:var(--t2)}
+.alert-meta{font-size:10px;color:var(--t3);margin-top:3px}
+.alert-actions{display:flex;gap:.4rem}
+
+/* ═══════════ DECISIONS FEED ═══════════ */
+.dec-item{padding:.85rem 1rem;border-bottom:1px solid rgba(255,255,255,.03);display:flex;gap:.8rem;align-items:flex-start}
+.dec-item:last-child{border-bottom:none}
+.dec-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.dec-body{flex:1}
+.dec-agent{font-size:12px;font-weight:700;color:var(--cyan)}
+.dec-text{font-size:12px;color:var(--t2);margin-top:2px}
+.dec-conf{font-size:10px;color:var(--t3);margin-top:3px}
+.dec-conf span{color:var(--green);font-weight:600}
+
+/* ═══════════ CHARTS ═══════════ */
+.chart-wrap{position:relative;height:240px;margin-top:.6rem}
+.charts-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:900px){.charts-2{grid-template-columns:1fr}}
+
+/* ═══════════ MODAL ═══════════ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;z-index:2000;backdrop-filter:blur(4px)}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg1);border:1px solid rgba(255,255,255,.08);border-radius:16px;width:90%;max-width:520px;max-height:85vh;overflow-y:auto;animation:modalIn .2s ease}
+.modal.wide{max-width:780px}
+@keyframes modalIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+.modal-hdr{padding:1.3rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between}
+.modal-hdr h3{font-size:17px;font-weight:700}
+.modal-body{padding:1.5rem}
+
+/* ─── FORM ─── */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.fg{margin-bottom:1rem}
+.fg label{display:block;font-size:11px;font-weight:600;color:var(--t2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.fg input,.fg select{width:100%;padding:.58rem .85rem;background:var(--bg2);border:1px solid rgba(255,255,255,.08);border-radius:var(--r);color:var(--t0);font-size:13px;transition:var(--tr)}
+.fg input:focus,.fg select:focus{outline:none;border-color:var(--cyan)}
+.fg select option{background:var(--bg2);color:var(--t0)}
+.form-actions{display:flex;gap:.6rem;margin-top:1.2rem}
+.form-actions .btn{flex:1;justify-content:center}
+
+/* ═══════════ CHAT ═══════════ */
+.chat-fab{position:fixed;bottom:1.5rem;right:1.5rem;width:52px;height:52px;background:linear-gradient(135deg,var(--cyan),var(--purple));border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:1000;box-shadow:0 8px 24px rgba(0,229,255,.35);transition:var(--tr)}
+.chat-fab:hover{transform:scale(1.08)}
+.chat-fab i{font-size:20px;color:#fff}
+.chat-fab .chat-badge{position:absolute;top:-2px;right:-2px;width:18px;height:18px;background:var(--red);border-radius:50%;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700;border:2px solid var(--bg0)}
+
+.chat-box{position:fixed;bottom:80px;right:1.5rem;width:380px;height:560px;background:var(--bg1);border:1px solid rgba(255,255,255,.1);border-radius:16px;display:none;flex-direction:column;z-index:999;box-shadow:0 20px 60px rgba(0,0,0,.5);animation:chatIn .25s ease}
+.chat-box.show{display:flex}
+@keyframes chatIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.chat-hdr{padding:1rem 1.2rem;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:.7rem}
+.chat-hdr .ch-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-size:14px}
+.chat-hdr .ch-info strong{display:block;font-size:13px}
+.chat-hdr .ch-info span{font-size:10px;color:var(--green)}
+.chat-hdr .ch-close{margin-left:auto;background:none;border:none;color:var(--t3);cursor:pointer;font-size:16px}
+.chat-hdr .ch-close:hover{color:var(--t0)}
+
+.chat-msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.7rem}
+.msg{display:flex;gap:.5rem;max-width:88%}
+.msg.user{align-self:flex-end;flex-direction:row-reverse}
+.msg-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.msg-av.ai{background:linear-gradient(135deg,var(--cyan),var(--purple))}
+.msg-av.usr{background:var(--bg3)}
+.msg-bubble{padding:.6rem .85rem;border-radius:12px;font-size:13px;line-height:1.5}
+.msg.ai .msg-bubble{background:var(--bg2);color:var(--t0)}
+.msg.user .msg-bubble{background:linear-gradient(135deg,var(--cyan),var(--purple));color:#fff}
+.msg-time{font-size:9px;color:var(--t3);margin-top:2px;text-align:right}
+.msg.ai .msg-time{text-align:left}
+
+.chat-input-wrap{padding:.8rem 1rem;border-top:1px solid rgba(255,255,255,.06)}
+.chat-input-row{display:flex;gap:.5rem}
+.chat-input-row input{flex:1;padding:.55rem .8rem;background:var(--bg2);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);color:var(--t0);font-size:13px}
+.chat-input-row input:focus{outline:none;border-color:var(--cyan)}
+.chat-send{width:36px;height:36px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:var(--tr)}
+.chat-send:hover{transform:scale(1.1)}
+
+/* ═══════════ EMPTY STATE ═══════════ */
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--t3)}
+.empty-state i{font-size:40px;opacity:.3;margin-bottom:1rem;display:block}
+.empty-state h4{font-size:15px;color:var(--t2);margin-bottom:.3rem}
+.empty-state p{font-size:12px}
+
+/* ═══════════ CONFIRM DIALOG ═══════════ */
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:3000}
+.confirm-overlay.show{display:flex}
+.confirm-box{background:var(--bg1);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:1.8rem;max-width:400px;width:90%;text-align:center}
+.confirm-box i{font-size:32px;color:var(--red);margin-bottom:.8rem}
+.confirm-box h3{font-size:16px;margin-bottom:.5rem}
+.confirm-box p{font-size:13px;color:var(--t2);margin-bottom:1.2rem}
+.confirm-btns{display:flex;gap:.6rem;justify-content:center}
+
+/* ═══════════ TOAST ═══════════ */
+.toast-wrap{position:fixed;top:1rem;right:1rem;z-index:5000;display:flex;flex-direction:column;gap:.5rem}
+.toast{background:var(--bg2);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);padding:.65rem 1rem;display:flex;align-items:center;gap:.6rem;font-size:13px;animation:toastIn .25s ease;min-width:240px}
+.toast.success{border-color:var(--green);color:var(--green)}
+.toast.error{border-color:var(--red);color:var(--red)}
+.toast.info{border-color:var(--cyan);color:var(--cyan)}
+@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+
+/* ═══════════ LOADING SPINNER ═══════════ */
+.spinner{width:18px;height:18px;border:2px solid var(--bg3);border-top-color:var(--cyan);border-radius:50%;animation:spin .5s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ═══════════ ROOM ANALYTICS MODAL SPECIFICS ═══════════ */
+.ra-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin-bottom:1rem}
+.ra-kpi{background:var(--bg2);border-radius:var(--r);padding:.8rem;text-align:center}
+.ra-kpi .ra-v{font-family:var(--fontD);font-size:24px;font-weight:700}
+.ra-kpi .ra-l{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.ra-recs{margin-top:1rem}
+.ra-rec{display:flex;align-items:center;gap:.5rem;padding:.55rem .8rem;background:var(--yellow2);border-radius:8px;margin-bottom:.4rem;font-size:12px;color:var(--yellow)}
+.ra-rec i{font-size:13px}
+
+/* ═══════════ WS STATUS ═══════════ */
+.ws-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);margin-right:6px;display:inline-block}
+.ws-dot.off{background:var(--red);box-shadow:0 0 5px var(--red)}
+
+/* ═══════════ RESPONSIVE ═══════════ */
+@media(max-width:700px){
+  .sidebar{display:none}
+  .charts-2{grid-template-columns:1fr}
+  .ra-kpis{grid-template-columns:1fr 1fr}
+  .chat-box{width:calc(100vw - 2rem);right:1rem}
+}
+</style>
 </head>
-
 <body>
-    <div class="app">
-        <!-- ═══════ SIDEBAR ═══════ -->
-        <aside class="sidebar">
-            <div class="brand">
-                <div class="brand-icon"><i class="fas fa-bolt"></i></div>
-                <div class="brand-text">
-                    <h1>EcoSchool AI</h1>
-                    <p>Enterprise Edition v12.0</p>
-                </div>
-            </div>
-            <nav class="nav">
-                <div class="nav-label">Overview</div>
-                <div class="nav-item active" data-page="dashboard" onclick="nav(this,'dashboard')"><i
-                        class="fas fa-th-large"></i><span>Dashboard</span></div>
-                <div class="nav-item" data-page="analytics" onclick="nav(this,'analytics')"><i
-                        class="fas fa-chart-line"></i><span>Analytics</span></div>
+<div class="app">
+<!-- ═══════ SIDEBAR ═══════ -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-icon"><i class="fas fa-bolt"></i></div>
+    <div class="brand-text"><h1>EcoSchool AI</h1><p>Ultimate v12.0</p></div>
+  </div>
+  <nav class="nav">
+    <div class="nav-label">Overview</div>
+    <div class="nav-item active" data-page="dashboard" onclick="nav(this,'dashboard')"><i class="fas fa-th-large"></i><span>Dashboard</span></div>
+    <div class="nav-item" data-page="analytics" onclick="nav(this,'analytics')"><i class="fas fa-chart-line"></i><span>Analytics</span></div>
 
-                <div class="nav-label">Management</div>
-                <div class="nav-item" data-page="rooms" onclick="nav(this,'rooms')"><i
-                        class="fas fa-door-open"></i><span>Rooms</span><span class="nav-badge" id="badge-rooms">0</span>
-                </div>
-                <div class="nav-item" data-page="sensors" onclick="nav(this,'sensors')"><i
-                        class="fas fa-broadcast-tower"></i><span>Sensors</span><span class="nav-badge"
-                        id="badge-sensors">0</span>
-                </div>
-                <div class="nav-item" data-page="devices" onclick="nav(this,'devices')"><i
-                        class="fas fa-plug"></i><span>Devices</span><span class="nav-badge" id="badge-devices">0</span>
-                </div>
+    <div class="nav-label">Management</div>
+    <div class="nav-item" data-page="rooms" onclick="nav(this,'rooms')"><i class="fas fa-door-open"></i><span>Rooms</span><span class="nav-badge" id="badge-rooms">0</span></div>
+    <div class="nav-item" data-page="sensors" onclick="nav(this,'sensors')"><i class="fas fa-broadcast-tower"></i><span>Sensors</span><span class="nav-badge" id="badge-sensors">0</span></div>
+    <div class="nav-item" data-page="devices" onclick="nav(this,'devices')"><i class="fas fa-plug"></i><span>Devices</span><span class="nav-badge" id="badge-devices">0</span></div>
 
-                <div class="nav-label">System</div>
-                <div class="nav-item" data-page="agents" onclick="nav(this,'agents')"><i
-                        class="fas fa-brain"></i><span>AI
-                        Agents</span><span class="nav-badge green">15</span></div>
-                <div class="nav-item" data-page="alerts" onclick="nav(this,'alerts')"><i
-                        class="fas fa-bell"></i><span>Alerts</span><span class="nav-badge" id="badge-alerts">0</span>
-                </div>
-            </nav>
-            <div class="sidebar-foot">
-                <div class="user-row">
-                    <div class="user-av"><i class="fas fa-user"></i></div>
-                    <div class="user-info"><strong>funnylion1412</strong><span>Admin</span></div>
-                </div>
-            </div>
-        </aside>
+    <div class="nav-label">System</div>
+    <div class="nav-item" data-page="agents" onclick="nav(this,'agents')"><i class="fas fa-brain"></i><span>AI Agents</span><span class="nav-badge green">15</span></div>
+    <div class="nav-item" data-page="alerts" onclick="nav(this,'alerts')"><i class="fas fa-bell"></i><span>Alerts</span><span class="nav-badge" id="badge-alerts">0</span></div>
+  </nav>
+  <div class="sidebar-foot">
+    <div class="user-row">
+      <div class="user-av"><i class="fas fa-user"></i></div>
+      <div class="user-info"><strong>funnylion1412</strong><span>Admin</span></div>
+    </div>
+  </div>
+</aside>
 
-        <!-- ═══════ MAIN ═══════ -->
-        <main class="main">
-            <!-- Topbar -->
-            <header class="topbar">
-                <div class="search-wrap">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="searchInput" placeholder="Search rooms, sensors, devices..."
-                        oninput="onSearch(event)">
-                    <div class="search-dropdown" id="searchDropdown"></div>
-                </div>
-                <div class="topbar-right">
-                    <span><span class="ws-dot" id="wsDot"></span><span id="wsLabel"
-                            style="font-size:11px;color:var(--t3)">Connecting…</span></span>
-                    <div class="lang-row">
-                        <button class="lang-btn active" onclick="setLang('vi',this)">VI</button>
-                        <button class="lang-btn" onclick="setLang('en',this)">EN</button>
-                    </div>
-                    <button class="icon-btn" onclick="toggleFullscreen()"><i class="fas fa-expand"></i></button>
-                </div>
-            </header>
+<!-- ═══════ MAIN ═══════ -->
+<main class="main">
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="search-wrap">
+      <i class="fas fa-search"></i>
+      <input type="text" id="searchInput" placeholder="Search rooms, sensors, devices..." oninput="onSearch(event)">
+      <div class="search-dropdown" id="searchDropdown"></div>
+    </div>
+    <div class="topbar-right">
+      <span><span class="ws-dot" id="wsDot"></span><span id="wsLabel" style="font-size:11px;color:var(--t3)">Connecting…</span></span>
+      <div class="lang-row">
+        <button class="lang-btn active" onclick="setLang('vi',this)">VI</button>
+        <button class="lang-btn" onclick="setLang('en',this)">EN</button>
+      </div>
+      <button class="icon-btn" onclick="toggleFullscreen()"><i class="fas fa-expand"></i></button>
+    </div>
+  </header>
 
-            <!-- Content -->
-            <div class="content">
+  <!-- Content -->
+  <div class="content">
 
-                <!-- ═══ DASHBOARD ═══ -->
-                <div class="page active" id="page-dashboard">
-                    <div class="kpi-grid">
-                        <div class="kpi">
-                            <div class="kpi-top"><span class="kpi-label">Energy Today</span>
-                                <div class="kpi-ico" style="background:var(--yellow2)"><i class="fas fa-bolt"
-                                        style="color:var(--yellow)"></i></div>
-                            </div>
-                            <div class="kpi-val" id="kpiEnergy">0<span class="unit">kWh</span></div>
-                            <div class="kpi-sub">Live power consumption</div>
-                            <div class="kpi-bar" style="background:linear-gradient(90deg,var(--yellow),var(--orange))">
-                            </div>
-                        </div>
-                        <div class="kpi">
-                            <div class="kpi-top"><span class="kpi-label">Occupancy</span>
-                                <div class="kpi-ico" style="background:var(--blue2)"><i class="fas fa-users"
-                                        style="color:var(--blue)"></i></div>
-                            </div>
-                            <div class="kpi-val" id="kpiOccupancy">0</div>
-                            <div class="kpi-sub">People detected now</div>
-                            <div class="kpi-bar" style="background:linear-gradient(90deg,var(--blue),var(--purple))">
-                            </div>
-                        </div>
-                        <div class="kpi">
-                            <div class="kpi-top"><span class="kpi-label">Temperature</span>
-                                <div class="kpi-ico" style="background:var(--green2)"><i class="fas fa-thermometer-half"
-                                        style="color:var(--green)"></i></div>
-                            </div>
-                            <div class="kpi-val" id="kpiTemp">0<span class="unit">°C</span></div>
-                            <div class="kpi-sub">Average across rooms</div>
-                            <div class="kpi-bar" style="background:linear-gradient(90deg,var(--green),var(--cyan))">
-                            </div>
-                        </div>
-                        <div class="kpi">
-                            <div class="kpi-top"><span class="kpi-label">System Health</span>
-                                <div class="kpi-ico" style="background:var(--purple2)"><i class="fas fa-heartbeat"
-                                        style="color:var(--purple)"></i></div>
-                            </div>
-                            <div class="kpi-val" id="kpiHealth" style="font-size:24px;color:var(--green)">READY</div>
-                            <div class="kpi-sub"><span id="sensorCnt">0</span> sensors online</div>
-                            <div class="kpi-bar"></div>
-                        </div>
-                    </div>
-
-                    <!-- Rooms + Decisions side by side -->
-                    <div class="charts-2">
-                        <!-- Rooms Panel -->
-                        <div class="panel">
-                            <div class="panel-hdr">
-                                <div class="panel-title"><i class="fas fa-door-open"></i>Rooms</div><button
-                                    class="btn sm" onclick="openModal('roomAdd')"><i class="fas fa-plus"></i>Add
-                                    Room</button>
-                            </div>
-                            <div class="panel-body">
-                                <div class="room-grid" id="roomGrid">
-                                    <div class="empty-state"><i class="fas fa-door-open"></i>
-                                        <h4>No rooms yet</h4>
-                                        <p>Click "Add Room" to start</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Decisions Panel -->
-                        <div class="panel">
-                            <div class="panel-hdr">
-                                <div class="panel-title"><i class="fas fa-brain"></i>AI Decision Feed</div>
-                            </div>
-                            <div class="panel-body" id="decisionFeed" style="max-height:420px;overflow-y:auto">
-                                <div class="empty-state"><i class="fas fa-robot"></i>
-                                    <h4>Waiting for data…</h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ═══ ANALYTICS ═══ -->
-                <div class="page" id="page-analytics">
-                    <div class="page-hdr">
-                        <h2><i class="fas fa-chart-line"></i>Analytics</h2>
-                    </div>
-                    <div class="kpi-grid" id="analyticsKpis">
-                        <div class="kpi">
-                            <div class="kpi-top"><span class="kpi-label">Total Energy</span>
-                                <div class="kpi-ico" style="background:var(--yellow2)"><i class="fas fa-bolt"
-                                        style="color:var(--yellow)"></i></div>
-                            </div>
-                            <div class="kpi-val" id="aEnergy">0<span class="unit">kWh</span></div>
-                            <div class="kpi-sub">Last 24 hours</div>
-                            <div class="kpi-bar" style="background:var(--yellow)"></div>
-                        </div>
-                        <div class="kpi">
-                            <div class="kpi-top"><span class="kpi-label">Avg Occupancy</span>
-                                <div class="kpi-ico" style="background:var(--blue2)"><i class="fas fa-users"
-                                        style="color:var(--blue)"></i></div>
-                            </div>
-                            <div class="kpi-val" id="aOcc">0</div>
-                            <div class="kpi-sub">Average people</div>
-                            <div class="kpi-bar" style="background:var(--blue)"></div>
-                        </div>
-                        <div class="kpi">
-                            <div class="kpi-top"><span class="kpi-label">Avg Temp</span>
-                                <div class="kpi-ico" style="background:var(--green2)"><i class="fas fa-thermometer-half"
-                                        style="color:var(--green)"></i></div>
-                            </div>
-                            <div class="kpi-val" id="aTemp">0<span class="unit">°C</span></div>
-                            <div class="kpi-sub">Across all rooms</div>
-                            <div class="kpi-bar" style="background:var(--green)"></div>
-                        </div>
-                        <div class="kpi">
-                            <div class="kpi-top"><span class="kpi-label">AI Decisions</span>
-                                <div class="kpi-ico" style="background:var(--purple2)"><i class="fas fa-brain"
-                                        style="color:var(--purple)"></i></div>
-                            </div>
-                            <div class="kpi-val" id="aAi">0</div>
-                            <div class="kpi-sub">Last 24 hours</div>
-                            <div class="kpi-bar" style="background:var(--purple)"></div>
-                        </div>
-                    </div>
-                    <div class="charts-2">
-                        <div class="panel">
-                            <div class="panel-hdr">
-                                <div class="panel-title"><i class="fas fa-bolt"></i>Energy (kW)</div>
-                            </div>
-                            <div class="panel-body">
-                                <div class="chart-wrap"><canvas id="chartEnergy"></canvas></div>
-                            </div>
-                        </div>
-                        <div class="panel">
-                            <div class="panel-hdr">
-                                <div class="panel-title"><i class="fas fa-users"></i>Occupancy</div>
-                            </div>
-                            <div class="panel-body">
-                                <div class="chart-wrap"><canvas id="chartOcc"></canvas></div>
-                            </div>
-                        </div>
-                        <div class="panel">
-                            <div class="panel-hdr">
-                                <div class="panel-title"><i class="fas fa-thermometer-half"></i>Temperature (°C)</div>
-                            </div>
-                            <div class="panel-body">
-                                <div class="chart-wrap"><canvas id="chartTemp"></canvas></div>
-                            </div>
-                        </div>
-                        <div class="panel">
-                            <div class="panel-hdr">
-                                <div class="panel-title"><i class="fas fa-bell"></i>Alerts by Severity</div>
-                            </div>
-                            <div class="panel-body">
-                                <div class="chart-wrap"><canvas id="chartAlerts"></canvas></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ═══ ROOMS ═══ -->
-                <div class="page" id="page-rooms">
-                    <div class="page-hdr">
-                        <h2><i class="fas fa-door-open"></i>Room Management</h2><button class="btn"
-                            onclick="openModal('roomAdd')"><i class="fas fa-plus"></i>Add Room</button>
-                    </div>
-                    <div class="room-grid" id="roomGridFull">
-                        <div class="empty-state"><i class="fas fa-door-open"></i>
-                            <h4>No rooms</h4>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ═══ SENSORS ═══ -->
-                <div class="page" id="page-sensors">
-                    <div class="page-hdr">
-                        <h2><i class="fas fa-broadcast-tower"></i>Sensors</h2><button class="btn"
-                            onclick="openModal('sensorAdd')"><i class="fas fa-plus"></i>Add Sensor</button>
-                    </div>
-                    <div class="panel">
-                        <div class="panel-body" style="padding:0;overflow-x:auto">
-                            <table class="s-table" id="sensorTable">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Room</th>
-                                        <th>Type</th>
-                                        <th>Unit</th>
-                                        <th>Value</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="sensorBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ═══ DEVICES ═══ -->
-                <div class="page" id="page-devices">
-                    <div class="page-hdr">
-                        <h2><i class="fas fa-plug"></i>IoT Devices</h2><button class="btn"
-                            onclick="openModal('deviceAdd')"><i class="fas fa-plus"></i>Add Device</button>
-                    </div>
-                    <div class="device-grid" id="deviceGrid">
-                        <div class="empty-state"><i class="fas fa-plug"></i>
-                            <h4>No devices</h4>
-                            <p>Add a device to start controlling</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ═══ AI AGENTS ═══ -->
-                <div class="page" id="page-agents">
-                    <div class="page-hdr">
-                        <h2><i class="fas fa-brain"></i>AI Agents</h2><span class="s-chip chip-green"
-                            style="font-size:12px"><i class="fas fa-circle" style="font-size:7px"></i>&nbsp;15
-                            Active</span>
-                    </div>
-                    <div class="agent-grid" id="agentGrid"></div>
-                </div>
-
-                <!-- ═══ ALERTS ═══ -->
-                <div class="page" id="page-alerts">
-                    <div class="page-hdr">
-                        <h2><i class="fas fa-bell"></i>Alerts</h2>
-                    </div>
-                    <div class="panel">
-                        <div class="panel-body" id="alertList">
-                            <div class="empty-state"><i class="fas fa-bell"></i>
-                                <h4>No alerts</h4>
-                                <p>System is healthy</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div><!-- end content -->
-        </main>
-    </div><!-- end app -->
-
-    <!-- ═══ CHAT FAB ═══ -->
-    <div class="chat-fab" onclick="toggleChat()"><i class="fas fa-comments"></i></div>
-
-    <!-- ═══ CHAT BOX ═══ -->
-    <div class="chat-box" id="chatBox">
-        <div class="chat-hdr">
-            <div class="ch-av"><i class="fas fa-robot"></i></div>
-            <div class="ch-info"><strong>Ultra AI</strong><span>● Online — Always ready</span></div>
-            <button class="ch-close" onclick="toggleChat()"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="chat-msgs" id="chatMsgs">
-            <div class="msg ai">
-                <div class="msg-av ai"><i class="fas fa-robot"></i></div>
-                <div>
-                    <div class="msg-bubble">Xin chào! Tôi là <strong>Ultra AI</strong> — trợ lý siêu thông minh của
-                        EcoSchool
-                        v12.<br>Hỏi tôi bất cứ điều gì về hệ thống!</div>
-                    <div class="msg-time">just now</div>
-                </div>
-            </div>
-        </div>
-        <div class="chat-input-wrap">
-            <div class="chat-input-row">
-                <input type="text" id="chatInput" placeholder="Ask Ultra AI…"
-                    onkeydown="if(event.key==='Enter')sendChat()">
-                <button class="chat-send" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
-            </div>
-        </div>
+  <!-- ═══ DASHBOARD ═══ -->
+  <div class="page active" id="page-dashboard">
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-top"><span class="kpi-label">Energy Today</span><div class="kpi-ico" style="background:var(--yellow2)"><i class="fas fa-bolt" style="color:var(--yellow)"></i></div></div><div class="kpi-val" id="kpiEnergy">0<span class="unit">kWh</span></div><div class="kpi-sub">Live power consumption</div><div class="kpi-bar" style="background:linear-gradient(90deg,var(--yellow),var(--orange))"></div></div>
+      <div class="kpi"><div class="kpi-top"><span class="kpi-label">Occupancy</span><div class="kpi-ico" style="background:var(--blue2)"><i class="fas fa-users" style="color:var(--blue)"></i></div></div><div class="kpi-val" id="kpiOccupancy">0</div><div class="kpi-sub">People detected now</div><div class="kpi-bar" style="background:linear-gradient(90deg,var(--blue),var(--purple))"></div></div>
+      <div class="kpi"><div class="kpi-top"><span class="kpi-label">Temperature</span><div class="kpi-ico" style="background:var(--green2)"><i class="fas fa-thermometer-half" style="color:var(--green)"></i></div></div><div class="kpi-val" id="kpiTemp">0<span class="unit">°C</span></div><div class="kpi-sub">Average across rooms</div><div class="kpi-bar" style="background:linear-gradient(90deg,var(--green),var(--cyan))"></div></div>
+      <div class="kpi"><div class="kpi-top"><span class="kpi-label">System Health</span><div class="kpi-ico" style="background:var(--purple2)"><i class="fas fa-heartbeat" style="color:var(--purple)"></i></div></div><div class="kpi-val" id="kpiHealth" style="font-size:24px;color:var(--green)">READY</div><div class="kpi-sub"><span id="sensorCnt">0</span> sensors online</div><div class="kpi-bar"></div></div>
     </div>
 
-    <!-- ═══ MODALS ═══ -->
-    <!-- Add Room -->
-    <div class="modal-overlay" id="modal-roomAdd">
-        <div class="modal">
-            <div class="modal-hdr">
-                <h3><i class="fas fa-door-open" style="color:var(--cyan);margin-right:.4rem"></i>Add Room</h3><button
-                    class="icon-btn" onclick="closeModal('roomAdd')"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="form-row">
-                    <div class="fg"><label>Room ID</label><input type="text" id="ar-id" placeholder="e.g. ROOM_101">
-                    </div>
-                    <div class="fg"><label>Room Name</label><input type="text" id="ar-name"
-                            placeholder="e.g. Classroom 101">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="fg"><label>Area (m²)</label><input type="number" id="ar-area" step="0.1"
-                            placeholder="50"></div>
-                    <div class="fg"><label>Floor</label><input type="number" id="ar-floor" placeholder="1"></div>
-                </div>
-                <div class="fg"><label>Building</label><input type="text" id="ar-building" placeholder="e.g. A"></div>
-                <div class="form-actions"><button class="btn" onclick="addRoom()"><i class="fas fa-plus"></i>Add
-                        Room</button><button class="btn ghost" onclick="closeModal('roomAdd')">Cancel</button></div>
-            </div>
-        </div>
+    <!-- Rooms + Decisions side by side -->
+    <div class="charts-2">
+      <!-- Rooms Panel -->
+      <div class="panel">
+        <div class="panel-hdr"><div class="panel-title"><i class="fas fa-door-open"></i>Rooms</div><button class="btn sm" onclick="openModal('roomAdd')"><i class="fas fa-plus"></i>Add Room</button></div>
+        <div class="panel-body"><div class="room-grid" id="roomGrid"><div class="empty-state"><i class="fas fa-door-open"></i><h4>No rooms yet</h4><p>Click "Add Room" to start</p></div></div></div>
+      </div>
+      <!-- Decisions Panel -->
+      <div class="panel">
+        <div class="panel-hdr"><div class="panel-title"><i class="fas fa-brain"></i>AI Decision Feed</div></div>
+        <div class="panel-body" id="decisionFeed" style="max-height:420px;overflow-y:auto"><div class="empty-state"><i class="fas fa-robot"></i><h4>Waiting for data…</h4></div></div>
+      </div>
     </div>
+  </div>
 
-    <!-- Add Sensor -->
-    <div class="modal-overlay" id="modal-sensorAdd">
-        <div class="modal">
-            <div class="modal-hdr">
-                <h3><i class="fas fa-broadcast-tower" style="color:var(--cyan);margin-right:.4rem"></i>Add Sensor</h3>
-                <button class="icon-btn" onclick="closeModal('sensorAdd')"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="fg"><label>Sensor ID</label><input type="text" id="as-id" placeholder="e.g. TEMP_101"></div>
-                <div class="fg"><label>Room</label><select id="as-room">
-                        <option value="">-- Select Room --</option>
-                    </select></div>
-                <div class="fg"><label>Type</label><select id="as-type">
-                        <option value="">-- Select Type --</option>
-                        <option value="temperature">Temperature</option>
-                        <option value="occupancy">Occupancy</option>
-                        <option value="humidity">Humidity</option>
-                        <option value="co2">CO₂</option>
-                        <option value="light">Light</option>
-                        <option value="power">Power</option>
-                    </select></div>
-                <div class="fg"><label>Unit</label><input type="text" id="as-unit"
-                        placeholder="e.g. °C, people, lux, kW"></div>
-                <div class="form-actions"><button class="btn" onclick="addSensor()"><i class="fas fa-plus"></i>Add
-                        Sensor</button><button class="btn ghost" onclick="closeModal('sensorAdd')">Cancel</button></div>
-            </div>
-        </div>
+  <!-- ═══ ANALYTICS ═══ -->
+  <div class="page" id="page-analytics">
+    <div class="page-hdr"><h2><i class="fas fa-chart-line"></i>Analytics</h2></div>
+    <div class="kpi-grid" id="analyticsKpis">
+      <div class="kpi"><div class="kpi-top"><span class="kpi-label">Total Energy</span><div class="kpi-ico" style="background:var(--yellow2)"><i class="fas fa-bolt" style="color:var(--yellow)"></i></div></div><div class="kpi-val" id="aEnergy">0<span class="unit">kWh</span></div><div class="kpi-sub">Last 24 hours</div><div class="kpi-bar" style="background:var(--yellow)"></div></div>
+      <div class="kpi"><div class="kpi-top"><span class="kpi-label">Avg Occupancy</span><div class="kpi-ico" style="background:var(--blue2)"><i class="fas fa-users" style="color:var(--blue)"></i></div></div><div class="kpi-val" id="aOcc">0</div><div class="kpi-sub">Average people</div><div class="kpi-bar" style="background:var(--blue)"></div></div>
+      <div class="kpi"><div class="kpi-top"><span class="kpi-label">Avg Temp</span><div class="kpi-ico" style="background:var(--green2)"><i class="fas fa-thermometer-half" style="color:var(--green)"></i></div></div><div class="kpi-val" id="aTemp">0<span class="unit">°C</span></div><div class="kpi-sub">Across all rooms</div><div class="kpi-bar" style="background:var(--green)"></div></div>
+      <div class="kpi"><div class="kpi-top"><span class="kpi-label">AI Decisions</span><div class="kpi-ico" style="background:var(--purple2)"><i class="fas fa-brain" style="color:var(--purple)"></i></div></div><div class="kpi-val" id="aAi">0</div><div class="kpi-sub">Last 24 hours</div><div class="kpi-bar" style="background:var(--purple)"></div></div>
     </div>
-
-    <!-- Add Device -->
-    <div class="modal-overlay" id="modal-deviceAdd">
-        <div class="modal">
-            <div class="modal-hdr">
-                <h3><i class="fas fa-plug" style="color:var(--cyan);margin-right:.4rem"></i>Add Device</h3><button
-                    class="icon-btn" onclick="closeModal('deviceAdd')"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="fg"><label>Device ID</label><input type="text" id="ad-id" placeholder="e.g. LIGHT_101">
-                </div>
-                <div class="fg"><label>Room</label><select id="ad-room">
-                        <option value="">-- Select Room --</option>
-                    </select></div>
-                <div class="fg"><label>Type</label><select id="ad-type">
-                        <option value="">-- Select Type --</option>
-                        <option value="LIGHT">Light</option>
-                        <option value="AC">Air Conditioner</option>
-                        <option value="FAN">Fan</option>
-                        <option value="HEATER">Heater</option>
-                        <option value="PROJECTOR">Projector</option>
-                    </select></div>
-                <div class="fg"><label>Device Name</label><input type="text" id="ad-name"
-                        placeholder="e.g. LED Light 1"></div>
-                <div class="form-actions"><button class="btn" onclick="addDevice()"><i class="fas fa-plus"></i>Add
-                        Device</button><button class="btn ghost" onclick="closeModal('deviceAdd')">Cancel</button></div>
-            </div>
-        </div>
+    <div class="charts-2">
+      <div class="panel"><div class="panel-hdr"><div class="panel-title"><i class="fas fa-bolt"></i>Energy (kW)</div></div><div class="panel-body"><div class="chart-wrap"><canvas id="chartEnergy"></canvas></div></div></div>
+      <div class="panel"><div class="panel-hdr"><div class="panel-title"><i class="fas fa-users"></i>Occupancy</div></div><div class="panel-body"><div class="chart-wrap"><canvas id="chartOcc"></canvas></div></div></div>
+      <div class="panel"><div class="panel-hdr"><div class="panel-title"><i class="fas fa-thermometer-half"></i>Temperature (°C)</div></div><div class="panel-body"><div class="chart-wrap"><canvas id="chartTemp"></canvas></div></div></div>
+      <div class="panel"><div class="panel-hdr"><div class="panel-title"><i class="fas fa-bell"></i>Alerts by Severity</div></div><div class="panel-body"><div class="chart-wrap"><canvas id="chartAlerts"></canvas></div></div></div>
     </div>
+  </div>
 
-    <!-- Room Analytics -->
-    <div class="modal-overlay" id="modal-roomAnalytics">
-        <div class="modal wide">
-            <div class="modal-hdr">
-                <h3 id="ra-title"><i class="fas fa-chart-bar" style="color:var(--cyan);margin-right:.4rem"></i>Room
-                    Analytics
-                </h3><button class="icon-btn" onclick="closeModal('roomAnalytics')"><i
-                        class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="ra-kpis">
-                    <div class="ra-kpi">
-                        <div class="ra-v" id="ra-eff" style="color:var(--green)">—</div>
-                        <div class="ra-l">Efficiency</div>
-                    </div>
-                    <div class="ra-kpi">
-                        <div class="ra-v" id="ra-sens" style="color:var(--cyan)">0</div>
-                        <div class="ra-l">Sensors</div>
-                    </div>
-                    <div class="ra-kpi">
-                        <div class="ra-v" id="ra-devs" style="color:var(--purple)">0</div>
-                        <div class="ra-l">Devices</div>
-                    </div>
-                </div>
-                <div class="chart-wrap" style="height:200px"><canvas id="chartRoomEnergy"></canvas></div>
-                <div class="ra-recs" id="ra-recs"></div>
-            </div>
-        </div>
+  <!-- ═══ ROOMS ═══ -->
+  <div class="page" id="page-rooms">
+    <div class="page-hdr"><h2><i class="fas fa-door-open"></i>Room Management</h2><button class="btn" onclick="openModal('roomAdd')"><i class="fas fa-plus"></i>Add Room</button></div>
+    <div class="room-grid" id="roomGridFull"><div class="empty-state"><i class="fas fa-door-open"></i><h4>No rooms</h4></div></div>
+  </div>
+
+  <!-- ═══ SENSORS ═══ -->
+  <div class="page" id="page-sensors">
+    <div class="page-hdr"><h2><i class="fas fa-broadcast-tower"></i>Sensors</h2><button class="btn" onclick="openModal('sensorAdd')"><i class="fas fa-plus"></i>Add Sensor</button></div>
+    <div class="panel"><div class="panel-body" style="padding:0;overflow-x:auto">
+      <table class="s-table" id="sensorTable"><thead><tr><th>ID</th><th>Room</th><th>Type</th><th>Unit</th><th>Value</th><th>Status</th><th>Actions</th></tr></thead><tbody id="sensorBody"></tbody></table>
+    </div></div>
+  </div>
+
+  <!-- ═══ DEVICES ═══ -->
+  <div class="page" id="page-devices">
+    <div class="page-hdr"><h2><i class="fas fa-plug"></i>IoT Devices</h2><button class="btn" onclick="openModal('deviceAdd')"><i class="fas fa-plus"></i>Add Device</button></div>
+    <div class="device-grid" id="deviceGrid"><div class="empty-state"><i class="fas fa-plug"></i><h4>No devices</h4><p>Add a device to start controlling</p></div></div>
+  </div>
+
+  <!-- ═══ AI AGENTS ═══ -->
+  <div class="page" id="page-agents">
+    <div class="page-hdr"><h2><i class="fas fa-brain"></i>AI Agents</h2><span class="s-chip chip-green" style="font-size:12px"><i class="fas fa-circle" style="font-size:7px"></i>&nbsp;15 Active</span></div>
+    <div class="agent-grid" id="agentGrid"></div>
+  </div>
+
+  <!-- ═══ ALERTS ═══ -->
+  <div class="page" id="page-alerts">
+    <div class="page-hdr"><h2><i class="fas fa-bell"></i>Alerts</h2></div>
+    <div class="panel"><div class="panel-body" id="alertList"><div class="empty-state"><i class="fas fa-bell"></i><h4>No alerts</h4><p>System is healthy</p></div></div></div>
+  </div>
+
+  </div><!-- end content -->
+</main>
+</div><!-- end app -->
+
+<!-- ═══ CHAT FAB ═══ -->
+<div class="chat-fab" onclick="toggleChat()"><i class="fas fa-comments"></i></div>
+
+<!-- ═══ CHAT BOX ═══ -->
+<div class="chat-box" id="chatBox">
+  <div class="chat-hdr">
+    <div class="ch-av"><i class="fas fa-robot"></i></div>
+    <div class="ch-info"><strong>Ultra AI</strong><span>● Online — Always ready</span></div>
+    <button class="ch-close" onclick="toggleChat()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="chat-msgs" id="chatMsgs">
+    <div class="msg ai"><div class="msg-av ai"><i class="fas fa-robot"></i></div><div><div class="msg-bubble">Xin chào! Tôi là <strong>Ultra AI</strong> — trợ lý siêu thông minh của EcoSchool v12.<br>Hỏi tôi bất cứ điều gì về hệ thống!</div><div class="msg-time">just now</div></div></div>
+  </div>
+  <div class="chat-input-wrap">
+    <div class="chat-input-row">
+      <input type="text" id="chatInput" placeholder="Ask Ultra AI…" onkeydown="if(event.key==='Enter')sendChat()">
+      <button class="chat-send" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
     </div>
+  </div>
+</div>
 
-    <!-- Confirm Delete -->
-    <div class="confirm-overlay" id="confirmOverlay">
-        <div class="confirm-box">
-            <i class="fas fa-trash-alt"></i>
-            <h3 id="confirmTitle">Delete?</h3>
-            <p id="confirmMsg">Are you sure?</p>
-            <div class="confirm-btns">
-                <button class="btn red" id="confirmOk" onclick="">Confirm</button>
-                <button class="btn ghost" onclick="closeConfirm()">Cancel</button>
-            </div>
-        </div>
+<!-- ═══ MODALS ═══ -->
+<!-- Add Room -->
+<div class="modal-overlay" id="modal-roomAdd">
+  <div class="modal">
+    <div class="modal-hdr"><h3><i class="fas fa-door-open" style="color:var(--cyan);margin-right:.4rem"></i>Add Room</h3><button class="icon-btn" onclick="closeModal('roomAdd')"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="fg"><label>Room ID</label><input type="text" id="ar-id" placeholder="e.g. ROOM_101"></div>
+        <div class="fg"><label>Room Name</label><input type="text" id="ar-name" placeholder="e.g. Classroom 101"></div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label>Area (m²)</label><input type="number" id="ar-area" step="0.1" placeholder="50"></div>
+        <div class="fg"><label>Floor</label><input type="number" id="ar-floor" placeholder="1"></div>
+      </div>
+      <div class="fg"><label>Building</label><input type="text" id="ar-building" placeholder="e.g. A"></div>
+      <div class="form-actions"><button class="btn" onclick="addRoom()"><i class="fas fa-plus"></i>Add Room</button><button class="btn ghost" onclick="closeModal('roomAdd')">Cancel</button></div>
     </div>
+  </div>
+</div>
 
-    <!-- Toast container -->
-    <div class="toast-wrap" id="toastWrap"></div>
+<!-- Add Sensor -->
+<div class="modal-overlay" id="modal-sensorAdd">
+  <div class="modal">
+    <div class="modal-hdr"><h3><i class="fas fa-broadcast-tower" style="color:var(--cyan);margin-right:.4rem"></i>Add Sensor</h3><button class="icon-btn" onclick="closeModal('sensorAdd')"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      <div class="fg"><label>Sensor ID</label><input type="text" id="as-id" placeholder="e.g. TEMP_101"></div>
+      <div class="fg"><label>Room</label><select id="as-room"><option value="">-- Select Room --</option></select></div>
+      <div class="fg"><label>Type</label><select id="as-type"><option value="">-- Select Type --</option><option value="temperature">Temperature</option><option value="occupancy">Occupancy</option><option value="humidity">Humidity</option><option value="co2">CO₂</option><option value="light">Light</option><option value="power">Power</option></select></div>
+      <div class="fg"><label>Unit</label><input type="text" id="as-unit" placeholder="e.g. °C, people, lux, kW"></div>
+      <div class="form-actions"><button class="btn" onclick="addSensor()"><i class="fas fa-plus"></i>Add Sensor</button><button class="btn ghost" onclick="closeModal('sensorAdd')">Cancel</button></div>
+    </div>
+  </div>
+</div>
 
-    <!-- ═══ SCRIPT ═══ -->
-    <script>
-        // ─── STATE ───
-        let lang = 'vi', ws = null;
-        let roomsCache = [], sensorsCache = [], devicesCache = [], agentsCache = [];
-        let charts = {};
+<!-- Add Device -->
+<div class="modal-overlay" id="modal-deviceAdd">
+  <div class="modal">
+    <div class="modal-hdr"><h3><i class="fas fa-plug" style="color:var(--cyan);margin-right:.4rem"></i>Add Device</h3><button class="icon-btn" onclick="closeModal('deviceAdd')"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      <div class="fg"><label>Device ID</label><input type="text" id="ad-id" placeholder="e.g. LIGHT_101"></div>
+      <div class="fg"><label>Room</label><select id="ad-room"><option value="">-- Select Room --</option></select></div>
+      <div class="fg"><label>Type</label><select id="ad-type"><option value="">-- Select Type --</option><option value="LIGHT">Light</option><option value="AC">Air Conditioner</option><option value="FAN">Fan</option><option value="HEATER">Heater</option><option value="PROJECTOR">Projector</option></select></div>
+      <div class="fg"><label>Device Name</label><input type="text" id="ad-name" placeholder="e.g. LED Light 1"></div>
+      <div class="form-actions"><button class="btn" onclick="addDevice()"><i class="fas fa-plus"></i>Add Device</button><button class="btn ghost" onclick="closeModal('deviceAdd')">Cancel</button></div>
+    </div>
+  </div>
+</div>
 
-        // ─── NAVIGATION ───
-        function nav(el, page) {
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            el.classList.add('active');
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('page-' + page).classList.add('active');
-            if (page === 'analytics') loadAnalytics();
-            if (page === 'sensors') renderSensors();
-            if (page === 'devices') fetchDevices();
-            if (page === 'agents') fetchAgents();
-            if (page === 'alerts') fetchAlerts();
-            if (page === 'rooms') renderRoomsFull();
-        }
+<!-- Room Analytics -->
+<div class="modal-overlay" id="modal-roomAnalytics">
+  <div class="modal wide">
+    <div class="modal-hdr"><h3 id="ra-title"><i class="fas fa-chart-bar" style="color:var(--cyan);margin-right:.4rem"></i>Room Analytics</h3><button class="icon-btn" onclick="closeModal('roomAnalytics')"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      <div class="ra-kpis">
+        <div class="ra-kpi"><div class="ra-v" id="ra-eff" style="color:var(--green)">—</div><div class="ra-l">Efficiency</div></div>
+        <div class="ra-kpi"><div class="ra-v" id="ra-sens" style="color:var(--cyan)">0</div><div class="ra-l">Sensors</div></div>
+        <div class="ra-kpi"><div class="ra-v" id="ra-devs" style="color:var(--purple)">0</div><div class="ra-l">Devices</div></div>
+      </div>
+      <div class="chart-wrap" style="height:200px"><canvas id="chartRoomEnergy"></canvas></div>
+      <div class="ra-recs" id="ra-recs"></div>
+    </div>
+  </div>
+</div>
 
-        // ─── WEBSOCKET ───
-        function connectWS() {
-            const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-            ws = new WebSocket(proto + '//' + location.host + '/ws');
-            ws.onopen = () => { setWS(true) };
-            ws.onmessage = e => {
-                const d = JSON.parse(e.data);
-                roomsCache = d.rooms || [];
-                sensorsCache = d.sensors_data || [];
-                devicesCache = d.devices || [];
-                agentsCache = d.ai_agents || [];
-                updateDashKPIs(d);
-                renderRoomCards('roomGrid', roomsCache, sensorsCache);
-                updateBadges(d);
-                renderDecisions(d.decisions || []);
-            };
-            ws.onclose = () => { setWS(false); setTimeout(connectWS, 3000) };
-            ws.onerror = () => { ws.close() };
-        }
-        function setWS(on) {
-            document.getElementById('wsDot').className = 'ws-dot' + (on ? '' : ' off');
-            document.getElementById('wsLabel').textContent = on ? 'Connected' : 'Reconnecting…';
-        }
+<!-- Confirm Delete -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <i class="fas fa-trash-alt"></i>
+    <h3 id="confirmTitle">Delete?</h3>
+    <p id="confirmMsg">Are you sure?</p>
+    <div class="confirm-btns">
+      <button class="btn red" id="confirmOk" onclick="">Confirm</button>
+      <button class="btn ghost" onclick="closeConfirm()">Cancel</button>
+    </div>
+  </div>
+</div>
 
-        // ─── KPI UPDATE ───
-        function updateDashKPIs(d) {
-            document.getElementById('kpiEnergy').innerHTML = (d.kpi_energy || 0).toFixed(1) + '<span class="unit">kWh</span>';
-            document.getElementById('kpiOccupancy').textContent = d.kpi_occupancy || 0;
-            document.getElementById('kpiTemp').innerHTML = (d.kpi_temp || 0).toFixed(1) + '<span class="unit">°C</span>';
-            document.getElementById('sensorCnt').textContent = d.kpi_sensors || 0;
-            const q = d.data_quality || 'NO_DATA';
-            document.getElementById('kpiHealth').textContent = q;
-            document.getElementById('kpiHealth').style.color = q === 'EXCELLENT' ? 'var(--green)' : q === 'NO_DATA' ? 'var(--t3)' : 'var(--yellow)';
-        }
-        function updateBadges(d) {
-            document.getElementById('badge-rooms').textContent = roomsCache.length;
-            document.getElementById('badge-sensors').textContent = sensorsCache.length;
-            document.getElementById('badge-devices').textContent = (d.devices || []).length;
-            document.getElementById('badge-alerts').textContent = (d.alerts || []).length;
-        }
+<!-- Toast container -->
+<div class="toast-wrap" id="toastWrap"></div>
 
-        // ─── RENDER ROOMS ───
-        function renderRoomCards(containerId, rooms, sensors) {
-            const g = document.getElementById(containerId);
-            if (!rooms || rooms.length === 0) { g.innerHTML = '<div class="empty-state"><i class="fas fa-door-open"></i><h4>No rooms yet</h4><p>Click Add Room</p></div>'; return }
-            g.innerHTML = '';
-            rooms.forEach(r => {
-                const rid = r.room_id || r['room_id'];
-                const rname = r.name;
-                const rs = sensors ? sensors.filter(s => s.room_id === rid) : [];
-                let temp = 0, occ = 0, pwr = 0;
-                rs.forEach(s => {
-                    if (s.sensor_type === 'temperature') temp = s.last_value || 0;
-                    if (s.sensor_type === 'occupancy') occ = s.last_value || 0;
-                    if (s.sensor_type === 'power') pwr = s.last_value || 0;
-                });
-                g.innerHTML += `
+<!-- ═══ SCRIPT ═══ -->
+<script>
+// ─── STATE ───
+let lang='vi', ws=null;
+let roomsCache=[], sensorsCache=[], devicesCache=[], agentsCache=[];
+let charts={};
+
+// ─── NAVIGATION ───
+function nav(el,page){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  if(page==='analytics') loadAnalytics();
+  if(page==='sensors') renderSensors();
+  if(page==='devices') fetchDevices();
+  if(page==='agents') fetchAgents();
+  if(page==='alerts') fetchAlerts();
+  if(page==='rooms') renderRoomsFull();
+}
+
+// ─── WEBSOCKET ───
+function connectWS(){
+  const proto=location.protocol==='https:'?'wss:':'ws:';
+  ws=new WebSocket(proto+'//'+location.host+'/ws');
+  ws.onopen=()=>{setWS(true)};
+  ws.onmessage=e=>{
+    const d=JSON.parse(e.data);
+    roomsCache=d.rooms||[];
+    sensorsCache=d.sensors_data||[];
+    devicesCache=d.devices||[];
+    agentsCache=d.ai_agents||[];
+    updateDashKPIs(d);
+    renderRoomCards('roomGrid',roomsCache,sensorsCache);
+    updateBadges(d);
+    renderDecisions(d.decisions||[]);
+  };
+  ws.onclose=()=>{setWS(false);setTimeout(connectWS,3000)};
+  ws.onerror=()=>{ws.close()};
+}
+function setWS(on){
+  document.getElementById('wsDot').className='ws-dot'+(on?'':' off');
+  document.getElementById('wsLabel').textContent=on?'Connected':'Reconnecting…';
+}
+
+// ─── KPI UPDATE ───
+function updateDashKPIs(d){
+  document.getElementById('kpiEnergy').innerHTML=(d.kpi_energy||0).toFixed(1)+'<span class="unit">kWh</span>';
+  document.getElementById('kpiOccupancy').textContent=d.kpi_occupancy||0;
+  document.getElementById('kpiTemp').innerHTML=(d.kpi_temp||0).toFixed(1)+'<span class="unit">°C</span>';
+  document.getElementById('sensorCnt').textContent=d.kpi_sensors||0;
+  const q=d.data_quality||'NO_DATA';
+  document.getElementById('kpiHealth').textContent=q;
+  document.getElementById('kpiHealth').style.color=q==='EXCELLENT'?'var(--green)':q==='NO_DATA'?'var(--t3)':'var(--yellow)';
+}
+function updateBadges(d){
+  document.getElementById('badge-rooms').textContent=roomsCache.length;
+  document.getElementById('badge-sensors').textContent=sensorsCache.length;
+  document.getElementById('badge-devices').textContent=(d.devices||[]).length;
+  document.getElementById('badge-alerts').textContent=(d.alerts||[]).length;
+}
+
+// ─── RENDER ROOMS ───
+function renderRoomCards(containerId,rooms,sensors){
+  const g=document.getElementById(containerId);
+  if(!rooms||rooms.length===0){g.innerHTML='<div class="empty-state"><i class="fas fa-door-open"></i><h4>No rooms yet</h4><p>Click Add Room</p></div>';return}
+  g.innerHTML='';
+  rooms.forEach(r=>{
+    const rid=r.room_id||r['room_id'];
+    const rname=r.name;
+    const rs=sensors?sensors.filter(s=>s.room_id===rid):[];
+    let temp=0,occ=0,pwr=0;
+    rs.forEach(s=>{
+      if(s.sensor_type==='temperature') temp=s.last_value||0;
+      if(s.sensor_type==='occupancy') occ=s.last_value||0;
+      if(s.sensor_type==='power') pwr=s.last_value||0;
+    });
+    g.innerHTML+=`
       <div class="room-card">
-        <div class="rc-hdr"><div class="rc-name">${rname}</div><div class="rc-status ${pwr > 0 ? '' : 'off'}"></div></div>
-        <div style="font-size:10px;color:var(--t3);margin-bottom:.6rem">${rid} · Floor ${r.floor || '?'} · ${r.building || '?'}</div>
+        <div class="rc-hdr"><div class="rc-name">${rname}</div><div class="rc-status ${pwr>0?'':'off'}"></div></div>
+        <div style="font-size:10px;color:var(--t3);margin-bottom:.6rem">${rid} · Floor ${r.floor||'?'} · ${r.building||'?'}</div>
         <div class="rc-metrics">
           <div class="rc-m"><div class="rc-ml"><i class="fas fa-thermometer-half"></i> Temp</div><div class="rc-mv">${temp}°C</div></div>
           <div class="rc-m"><div class="rc-ml"><i class="fas fa-users"></i> People</div><div class="rc-mv">${occ}</div></div>
@@ -2194,417 +640,399 @@
           <button class="btn sm red" onclick="confirmDeleteRoom('${rid}','${rname}')"><i class="fas fa-trash"></i></button>
         </div>
       </div>`;
-            });
-        }
-        function renderRoomsFull() { renderRoomCards('roomGridFull', roomsCache, sensorsCache) }
+  });
+}
+function renderRoomsFull(){renderRoomCards('roomGridFull',roomsCache,sensorsCache)}
 
-        // ─── DECISIONS FEED ───
-        function renderDecisions(decs) {
-            const f = document.getElementById('decisionFeed');
-            if (!decs || decs.length === 0) { f.innerHTML = '<div class="empty-state"><i class="fas fa-robot"></i><h4>Waiting…</h4></div>'; return }
-            f.innerHTML = '';
-            decs.slice(0, 12).forEach(d => {
-                const conf = ((d.confidence || 0) * 100).toFixed(0);
-                const st = d.status || '';
-                const color = st === 'COMPLETED' ? 'var(--green)' : st === 'RECOMMENDATION' ? 'var(--yellow)' : 'var(--cyan)';
-                const ts = d.timestamp ? new Date(d.timestamp * 1000).toLocaleTimeString() : '';
-                f.innerHTML += `<div class="dec-item"><div class="dec-dot" style="background:${color}"></div><div class="dec-body"><div class="dec-agent">${d.agent_name || 'Agent'} <span style="color:var(--t3);font-weight:400;font-size:10px">${ts}</span></div><div class="dec-text">${d.reasoning || ''}</div><div class="dec-conf">Confidence: <span>${conf}%</span> · Status: <span style="color:${color}">${st}</span></div></div></div>`;
-            });
-        }
+// ─── DECISIONS FEED ───
+function renderDecisions(decs){
+  const f=document.getElementById('decisionFeed');
+  if(!decs||decs.length===0){f.innerHTML='<div class="empty-state"><i class="fas fa-robot"></i><h4>Waiting…</h4></div>';return}
+  f.innerHTML='';
+  decs.slice(0,12).forEach(d=>{
+    const conf=((d.confidence||0)*100).toFixed(0);
+    const st=d.status||'';
+    const color=st==='COMPLETED'?'var(--green)':st==='RECOMMENDATION'?'var(--yellow)':'var(--cyan)';
+    const ts=d.timestamp?new Date(d.timestamp*1000).toLocaleTimeString():'';
+    f.innerHTML+=`<div class="dec-item"><div class="dec-dot" style="background:${color}"></div><div class="dec-body"><div class="dec-agent">${d.agent_name||'Agent'} <span style="color:var(--t3);font-weight:400;font-size:10px">${ts}</span></div><div class="dec-text">${d.reasoning||''}</div><div class="dec-conf">Confidence: <span>${conf}%</span> · Status: <span style="color:${color}">${st}</span></div></div></div>`;
+  });
+}
 
-        // ─── SENSORS TABLE ───
-        function renderSensors() {
-            fetch('/api/rooms').then(r => r.json()).then(async rd => {
-                // We'll use sensorsCache from WS + rooms info
-                const rooms = rd.rooms || roomsCache;
-                const roomMap = {}; rooms.forEach(r => { roomMap[r.room_id] = r.name });
-                const tbody = document.getElementById('sensorBody');
-                tbody.innerHTML = '';
-                document.getElementById('badge-sensors').textContent = sensorsCache.length;
-                if (sensorsCache.length === 0) { tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><i class="fas fa-broadcast-tower"></i><h4>No sensors</h4></div></td></tr>'; return }
-                sensorsCache.forEach(s => {
-                    const chipClass = s.status === 'ONLINE' ? 'chip-green' : s.status === 'WAITING' ? 'chip-yellow' : 'chip-gray';
-                    const typeChip = getTypeChip(s.sensor_type);
-                    tbody.innerHTML += `<tr>
+// ─── SENSORS TABLE ───
+function renderSensors(){
+  fetch('/api/rooms').then(r=>r.json()).then(async rd=>{
+    // We'll use sensorsCache from WS + rooms info
+    const rooms=rd.rooms||roomsCache;
+    const roomMap={};rooms.forEach(r=>{roomMap[r.room_id]=r.name});
+    const tbody=document.getElementById('sensorBody');
+    tbody.innerHTML='';
+    document.getElementById('badge-sensors').textContent=sensorsCache.length;
+    if(sensorsCache.length===0){tbody.innerHTML='<tr><td colspan="7"><div class="empty-state"><i class="fas fa-broadcast-tower"></i><h4>No sensors</h4></div></td></tr>';return}
+    sensorsCache.forEach(s=>{
+      const chipClass=s.status==='ONLINE'?'chip-green':s.status==='WAITING'?'chip-yellow':'chip-gray';
+      const typeChip=getTypeChip(s.sensor_type);
+      tbody.innerHTML+=`<tr>
         <td style="font-weight:600;color:var(--cyan);font-family:var(--fontD)">${s.sensor_id}</td>
-        <td>${roomMap[s.room_id] || s.room_id}</td>
+        <td>${roomMap[s.room_id]||s.room_id}</td>
         <td>${typeChip}</td>
-        <td>${s.unit || '—'}</td>
-        <td style="font-weight:700">${s.last_value || 0}</td>
-        <td><span class="s-chip ${chipClass}">${s.status || '?'}</span></td>
+        <td>${s.unit||'—'}</td>
+        <td style="font-weight:700">${s.last_value||0}</td>
+        <td><span class="s-chip ${chipClass}">${s.status||'?'}</span></td>
         <td><button class="btn sm red" onclick="confirmDeleteSensor('${s.sensor_id}')"><i class="fas fa-trash"></i></button></td>
       </tr>`;
-                });
-            });
-        }
-        function getTypeChip(t) {
-            const map = { temperature: 'chip-red', occupancy: 'chip-blue', humidity: 'chip-purple', co2: 'chip-orange', light: 'chip-yellow', power: 'chip-cyan' };
-            return `<span class="s-chip ${map[t] || 'chip-gray'}">${t || '?'}</span>`;
-        }
+    });
+  });
+}
+function getTypeChip(t){
+  const map={temperature:'chip-red',occupancy:'chip-blue',humidity:'chip-purple',co2:'chip-orange',light:'chip-yellow',power:'chip-cyan'};
+  return `<span class="s-chip ${map[t]||'chip-gray'}">${t||'?'}</span>`;
+}
 
-        // ─── DEVICES ───
-        async function fetchDevices() {
-            try {
-                const r = await fetch('/api/devices');
-                const d = await r.json();
-                devicesCache = d.devices || [];
-                renderDevices(devicesCache);
-            } catch (e) { console.error(e) }
-        }
-        function renderDevices(devs) {
-            const g = document.getElementById('deviceGrid');
-            if (!devs || devs.length === 0) { g.innerHTML = '<div class="empty-state"><i class="fas fa-plug"></i><h4>No devices</h4><p>Add a device to begin</p></div>'; return }
-            g.innerHTML = '';
-            devs.forEach(d => {
-                const isOn = d.status === 'ON';
-                const icons = { LIGHT: 'fa-lightbulb', AC: 'fa-wind', FAN: 'fa-fan', HEATER: 'fa-fire', PROJECTOR: 'fa-video' };
-                const icon = icons[d.device_type] || 'fa-plug';
-                const colors = { LIGHT: 'var(--yellow)', AC: 'var(--blue)', FAN: 'var(--cyan)', HEATER: 'var(--red)', PROJECTOR: 'var(--purple)' };
-                const color = colors[d.device_type] || 'var(--cyan)';
-                g.innerHTML += `<div class="dev-card ${isOn ? 'on' : ''}">
+// ─── DEVICES ───
+async function fetchDevices(){
+  try{
+    const r=await fetch('/api/devices');
+    const d=await r.json();
+    devicesCache=d.devices||[];
+    renderDevices(devicesCache);
+  }catch(e){console.error(e)}
+}
+function renderDevices(devs){
+  const g=document.getElementById('deviceGrid');
+  if(!devs||devs.length===0){g.innerHTML='<div class="empty-state"><i class="fas fa-plug"></i><h4>No devices</h4><p>Add a device to begin</p></div>';return}
+  g.innerHTML='';
+  devs.forEach(d=>{
+    const isOn=d.status==='ON';
+    const icons={LIGHT:'fa-lightbulb',AC:'fa-wind',FAN:'fa-fan',HEATER:'fa-fire',PROJECTOR:'fa-video'};
+    const icon=icons[d.device_type]||'fa-plug';
+    const colors={LIGHT:'var(--yellow)',AC:'var(--blue)',FAN:'var(--cyan)',HEATER:'var(--red)',PROJECTOR:'var(--purple)'};
+    const color=colors[d.device_type]||'var(--cyan)';
+    g.innerHTML+=`<div class="dev-card ${isOn?'on':''}">
       <div class="dev-hdr">
         <div class="dev-icon" style="background:${color}20"><i class="fas ${icon}" style="color:${color}"></i></div>
-        <div class="dev-info"><strong>${d.device_name}</strong><span>${d.device_type} · ${d.room_name || d.room_id}</span></div>
-        <span class="s-chip ${isOn ? 'chip-green' : 'chip-gray'}">${d.status}</span>
+        <div class="dev-info"><strong>${d.device_name}</strong><span>${d.device_type} · ${d.room_name||d.room_id}</span></div>
+        <span class="s-chip ${isOn?'chip-green':'chip-gray'}">${d.status}</span>
       </div>
       <div class="dev-toggle">
-        <button class="btn sm green-btn ${isOn ? '' : 'ghost'}" onclick="controlDevice('${d.device_id}','ON')"><i class="fas fa-power-off"></i>ON</button>
-        <button class="btn sm red ${!isOn ? '' : 'ghost'}" onclick="controlDevice('${d.device_id}','OFF')"><i class="fas fa-stop"></i>OFF</button>
+        <button class="btn sm green-btn ${isOn?'':'ghost'}" onclick="controlDevice('${d.device_id}','ON')"><i class="fas fa-power-off"></i>ON</button>
+        <button class="btn sm red ${!isOn?'':'ghost'}" onclick="controlDevice('${d.device_id}','OFF')"><i class="fas fa-stop"></i>OFF</button>
       </div>
     </div>`;
-            });
-        }
-        async function controlDevice(did, cmd) {
-            try {
-                const r = await fetch('/api/devices/control', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ device_id: did, command: cmd }) });
-                const d = await r.json();
-                if (d.success) { toast('success', `Device turned ${cmd}`); fetchDevices(); }
-                else toast('error', d.error || 'Failed');
-            } catch (e) { toast('error', 'Connection error') }
-        }
+  });
+}
+async function controlDevice(did,cmd){
+  try{
+    const r=await fetch('/api/devices/control',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({device_id:did,command:cmd})});
+    const d=await r.json();
+    if(d.success){toast('success',`Device turned ${cmd}`);fetchDevices();}
+    else toast('error',d.error||'Failed');
+  }catch(e){toast('error','Connection error')}
+}
 
-        // ─── AI AGENTS ───
-        async function fetchAgents() {
-            try {
-                const r = await fetch('/api/ai/status');
-                const d = await r.json();
-                agentsCache = d.agents || [];
-                renderAgents(agentsCache);
-            } catch (e) { renderAgents(agentsCache) }
-        }
-        function renderAgents(agents) {
-            const g = document.getElementById('agentGrid');
-            if (!agents || agents.length === 0) { g.innerHTML = '<div class="empty-state"><i class="fas fa-brain"></i><h4>Loading agents…</h4></div>'; return }
-            g.innerHTML = '';
-
-            const dutyMap = {
-                "Edge Data Collector AI": "Thu thập & chuẩn hóa dữ liệu sensor",
-                "Environmental Analysis AI": "Phân tích điều kiện môi trường",
-                "Occupancy & Presence AI": "Nhận diện người qua Camera AI",
-                "Scheduling & Behavior Learning AI": "Học thói quen & lịch trình",
-                "Energy Optimization AI": "Chiến lược tiết kiệm điện",
-                "Actuator Control AI": "Điều khiển thiết bị chấp hành",
-                "System Monitoring & Safety AI": "Giám sát an toàn & cháy nổ",
-                "Data Management AI": "Quản lý dữ liệu SQL",
-                "Reporting & Analytics AI": "Tạo báo cáo hiệu suất",
-                "User Experience & Personalization AI": "Cá nhân hóa trải nghiệm",
-                "Cybersecurity & Threat Detection AI": "Bảo mật hệ thống IOT",
-                "Predictive Maintenance AI": "Dự báo bảo trì thiết bị"
-            };
-
-            agents.forEach((a, i) => {
-                const duty = dutyMap[a.name] || a.expertise || a.role;
-                g.innerHTML += `<div class="agent-card ${a.active ? 'active-agent' : ''}">
-      <div class="agent-dot ${a.active && a.decisions_made > 0 ? '' : 'idle'}"></div>
-      <div class="agent-num">${(i + 1).toString().padStart(2, '0')}</div>
-      <div class="agent-info"><strong>${a.name}</strong><span>${duty}</span></div>
-      <div class="agent-decisions">${a.decisions_made || 0}</div>
+// ─── AI AGENTS ───
+async function fetchAgents(){
+  try{
+    const r=await fetch('/api/ai/status');
+    const d=await r.json();
+    agentsCache=d.agents||[];
+    renderAgents(agentsCache);
+  }catch(e){renderAgents(agentsCache)}
+}
+function renderAgents(agents){
+  const g=document.getElementById('agentGrid');
+  if(!agents||agents.length===0){g.innerHTML='<div class="empty-state"><i class="fas fa-brain"></i><h4>Loading agents…</h4></div>';return}
+  g.innerHTML='';
+  agents.forEach((a,i)=>{
+    g.innerHTML+=`<div class="agent-card ${a.active?'active-agent':''}">
+      <div class="agent-dot ${a.active&&a.decisions_made>0?'':'idle'}"></div>
+      <div class="agent-num">${(i+1).toString().padStart(2,'0')}</div>
+      <div class="agent-info"><strong>${a.name}</strong><span>${a.expertise||a.role}</span></div>
+      <div class="agent-decisions">${a.decisions_made||0}</div>
     </div>`;
-            });
-        }
+  });
+}
 
-        // ─── ALERTS ───
-        async function fetchAlerts() {
-            try {
-                const r = await fetch('/api/alerts');
-                const d = await r.json();
-                renderAlerts(d.alerts || []);
-            } catch (e) { }
-        }
-        function renderAlerts(alerts) {
-            const c = document.getElementById('alertList');
-            if (!alerts || alerts.length === 0) { c.innerHTML = '<div class="empty-state"><i class="fas fa-bell"></i><h4>No alerts</h4><p>System is healthy</p></div>'; return }
-            c.innerHTML = '';
-            alerts.forEach(a => {
-                const sev = a.severity || 'INFO';
-                const colors = { CRITICAL: 'var(--red)', WARNING: 'var(--yellow)', INFO: 'var(--blue)' };
-                const bgs = { CRITICAL: 'var(--red2)', WARNING: 'var(--yellow2)', INFO: 'var(--blue2)' };
-                const icons = { CRITICAL: 'fa-exclamation-triangle', WARNING: 'fa-exclamation-circle', INFO: 'fa-info-circle' };
-                const chipClass = { CRITICAL: 'chip-red', WARNING: 'chip-yellow', INFO: 'chip-blue' };
-                const ts = a.timestamp ? new Date(a.timestamp * 1000).toLocaleString() : '';
-                c.innerHTML += `<div class="alert-item">
-      <div class="alert-icon" style="background:${bgs[sev] || 'var(--blue2)'};"><i class="fas ${icons[sev] || 'fa-info-circle'}" style="color:${colors[sev]}"></i></div>
+// ─── ALERTS ───
+async function fetchAlerts(){
+  try{
+    const r=await fetch('/api/alerts');
+    const d=await r.json();
+    renderAlerts(d.alerts||[]);
+  }catch(e){}
+}
+function renderAlerts(alerts){
+  const c=document.getElementById('alertList');
+  if(!alerts||alerts.length===0){c.innerHTML='<div class="empty-state"><i class="fas fa-bell"></i><h4>No alerts</h4><p>System is healthy</p></div>';return}
+  c.innerHTML='';
+  alerts.forEach(a=>{
+    const sev=a.severity||'INFO';
+    const colors={CRITICAL:'var(--red)',WARNING:'var(--yellow)',INFO:'var(--blue)'};
+    const bgs={CRITICAL:'var(--red2)',WARNING:'var(--yellow2)',INFO:'var(--blue2)'};
+    const icons={CRITICAL:'fa-exclamation-triangle',WARNING:'fa-exclamation-circle',INFO:'fa-info-circle'};
+    const chipClass={CRITICAL:'chip-red',WARNING:'chip-yellow',INFO:'chip-blue'};
+    const ts=a.timestamp?new Date(a.timestamp*1000).toLocaleString():'';
+    c.innerHTML+=`<div class="alert-item">
+      <div class="alert-icon" style="background:${bgs[sev]||'var(--blue2)'};"><i class="fas ${icons[sev]||'fa-info-circle'}" style="color:${colors[sev]}"></i></div>
       <div class="alert-body">
-        <strong>${a.title || 'Alert'} <span class="s-chip ${chipClass[sev] || 'chip-blue'}">${sev}</span></strong>
-        <p>${a.message || ''}</p>
-        <div class="alert-meta"><i class="fas fa-map-marker-alt"></i> ${a.location || 'Unknown'} · ${ts}</div>
+        <strong>${a.title||'Alert'} <span class="s-chip ${chipClass[sev]||'chip-blue'}">${sev}</span></strong>
+        <p>${a.message||''}</p>
+        <div class="alert-meta"><i class="fas fa-map-marker-alt"></i> ${a.location||'Unknown'} · ${ts}</div>
       </div>
     </div>`;
-            });
-        }
+  });
+}
 
-        // ─── ANALYTICS ───
-        function initCharts() {
-            const opt = (label, color) => ({ type: 'line', data: { labels: [], datasets: [{ label, data: [], borderColor: color, backgroundColor: color + '22', fill: true, tension: .3, pointRadius: 0 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { color: '#8899aa', maxTicksLimit: 8 }, grid: { color: 'rgba(255,255,255,.04)' } }, y: { ticks: { color: '#8899aa' }, grid: { color: 'rgba(255,255,255,.04)' } } }, plugins: { legend: { display: false } } } });
-            charts.energy = new Chart(document.getElementById('chartEnergy'), opt('kW', '#fbbf24'));
-            charts.occ = new Chart(document.getElementById('chartOcc'), opt('People', '#60a5fa'));
-            charts.temp = new Chart(document.getElementById('chartTemp'), opt('°C', '#34d399'));
-            charts.alerts = new Chart(document.getElementById('chartAlerts'), { type: 'doughnut', data: { labels: ['Critical', 'Warning', 'Info'], datasets: [{ data: [0, 0, 0], backgroundColor: ['#f87171', '#fbbf24', '#60a5fa'], borderColor: 'transparent' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#c8d6e5' } } } } });
-        }
-        async function loadAnalytics() {
-            try {
-                const r = await fetch('/api/analytics?hours=24');
-                const d = await r.json();
-                const eh = d.energy_history || [], oh = d.occupancy_history || [], th = d.temp_history || [];
-                const totalE = eh.reduce((s, i) => s + (i.value || 0), 0);
-                const avgO = oh.length ? oh.reduce((s, i) => s + (i.value || 0), 0) / oh.length : 0;
-                const avgT = th.length ? th.reduce((s, i) => s + (i.value || 0), 0) / th.length : 0;
-                document.getElementById('aEnergy').innerHTML = totalE.toFixed(1) + '<span class="unit">kWh</span>';
-                document.getElementById('aOcc').textContent = Math.round(avgO);
-                document.getElementById('aTemp').innerHTML = avgT.toFixed(1) + '<span class="unit">°C</span>';
-                document.getElementById('aAi').textContent = d.ai_decisions_count || 0;
-                const fmt = ts => new Date(ts * 1000).toLocaleTimeString('vi', { hour: '2-digit', minute: '2-digit' });
-                if (charts.energy) { charts.energy.data.labels = eh.map(i => fmt(i.timestamp)); charts.energy.data.datasets[0].data = eh.map(i => i.value); charts.energy.update() }
-                if (charts.occ) { charts.occ.data.labels = oh.map(i => fmt(i.timestamp)); charts.occ.data.datasets[0].data = oh.map(i => i.value); charts.occ.update() }
-                if (charts.temp) { charts.temp.data.labels = th.map(i => fmt(i.timestamp)); charts.temp.data.datasets[0].data = th.map(i => i.value); charts.temp.update() }
-                const asev = d.alerts_by_severity || {};
-                if (charts.alerts) { charts.alerts.data.datasets[0].data = [asev.CRITICAL || 0, asev.WARNING || 0, asev.INFO || 0]; charts.alerts.update() }
-            } catch (e) { console.error(e) }
-        }
+// ─── ANALYTICS ───
+function initCharts(){
+  const opt=(label,color)=>({type:'line',data:{labels:[],datasets:[{label,data:[],borderColor:color,backgroundColor:color+'22',fill:true,tension:.3,pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#8899aa',maxTicksLimit:8},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{color:'#8899aa'},grid:{color:'rgba(255,255,255,.04)'}}},plugins:{legend:{display:false}}}});
+  charts.energy=new Chart(document.getElementById('chartEnergy'),opt('kW','#fbbf24'));
+  charts.occ=new Chart(document.getElementById('chartOcc'),opt('People','#60a5fa'));
+  charts.temp=new Chart(document.getElementById('chartTemp'),opt('°C','#34d399'));
+  charts.alerts=new Chart(document.getElementById('chartAlerts'),{type:'doughnut',data:{labels:['Critical','Warning','Info'],datasets:[{data:[0,0,0],backgroundColor:['#f87171','#fbbf24','#60a5fa'],borderColor:'transparent'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#c8d6e5'}}}}});
+}
+async function loadAnalytics(){
+  try{
+    const r=await fetch('/api/analytics?hours=24');
+    const d=await r.json();
+    const eh=d.energy_history||[],oh=d.occupancy_history||[],th=d.temp_history||[];
+    const totalE=eh.reduce((s,i)=>s+(i.value||0),0);
+    const avgO=oh.length?oh.reduce((s,i)=>s+(i.value||0),0)/oh.length:0;
+    const avgT=th.length?th.reduce((s,i)=>s+(i.value||0),0)/th.length:0;
+    document.getElementById('aEnergy').innerHTML=totalE.toFixed(1)+'<span class="unit">kWh</span>';
+    document.getElementById('aOcc').textContent=Math.round(avgO);
+    document.getElementById('aTemp').innerHTML=avgT.toFixed(1)+'<span class="unit">°C</span>';
+    document.getElementById('aAi').textContent=d.ai_decisions_count||0;
+    const fmt=ts=>new Date(ts*1000).toLocaleTimeString('vi',{hour:'2-digit',minute:'2-digit'});
+    if(charts.energy){charts.energy.data.labels=eh.map(i=>fmt(i.timestamp));charts.energy.data.datasets[0].data=eh.map(i=>i.value);charts.energy.update()}
+    if(charts.occ){charts.occ.data.labels=oh.map(i=>fmt(i.timestamp));charts.occ.data.datasets[0].data=oh.map(i=>i.value);charts.occ.update()}
+    if(charts.temp){charts.temp.data.labels=th.map(i=>fmt(i.timestamp));charts.temp.data.datasets[0].data=th.map(i=>i.value);charts.temp.update()}
+    const asev=d.alerts_by_severity||{};
+    if(charts.alerts){charts.alerts.data.datasets[0].data=[asev.CRITICAL||0,asev.WARNING||0,asev.INFO||0];charts.alerts.update()}
+  }catch(e){console.error(e)}
+}
 
-        // ─── ROOM ANALYTICS MODAL ───
-        let raChart = null;
-        async function openRoomAnalytics(roomId) {
-            try {
-                const r = await fetch(`/api/rooms/${roomId}/analytics?hours=24`);
-                const d = await r.json();
-                document.getElementById('ra-title').innerHTML = `<i class="fas fa-chart-bar" style="color:var(--cyan);margin-right:.4rem"></i>${(d.room_info && d.room_info.name) || roomId}`;
-                document.getElementById('ra-eff').textContent = (d.efficiency_score != null ? d.efficiency_score : '—') + '%';
-                document.getElementById('ra-eff').style.color = d.efficiency_score >= 60 ? 'var(--green)' : 'var(--red)';
-                document.getElementById('ra-sens').textContent = (d.sensors || []).length;
-                document.getElementById('ra-devs').textContent = (d.devices || []).length;
-                // Recs
-                const recsEl = document.getElementById('ra-recs');
-                recsEl.innerHTML = '';
-                if (d.recommendations && d.recommendations.length) {
-                    d.recommendations.forEach(rec => { recsEl.innerHTML += `<div class="ra-rec"><i class="fas fa-lightbulb"></i>${rec}</div>` });
-                }
-                openModal('roomAnalytics');
-                // Chart
-                const ec = d.energy_consumption || [];
-                const ctx = document.getElementById('chartRoomEnergy');
-                if (raChart) { raChart.destroy() }
-                raChart = new Chart(ctx, { type: 'line', data: { labels: ec.map(i => new Date(i.timestamp * 1000).toLocaleTimeString('vi', { hour: '2-digit', minute: '2-digit' })), datasets: [{ label: 'kW', data: ec.map(i => i.value), borderColor: '#fbbf24', backgroundColor: 'rgba(251,191,36,.12)', fill: true, tension: .3, pointRadius: 0 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { color: '#8899aa', maxTicksLimit: 6 }, grid: { color: 'rgba(255,255,255,.04)' } }, y: { ticks: { color: '#8899aa' }, grid: { color: 'rgba(255,255,255,.04)' } } }, plugins: { legend: { display: false } } } });
-            } catch (e) { toast('error', 'Failed to load analytics') }
-        }
+// ─── ROOM ANALYTICS MODAL ───
+let raChart=null;
+async function openRoomAnalytics(roomId){
+  try{
+    const r=await fetch(`/api/rooms/${roomId}/analytics?hours=24`);
+    const d=await r.json();
+    document.getElementById('ra-title').innerHTML=`<i class="fas fa-chart-bar" style="color:var(--cyan);margin-right:.4rem"></i>${(d.room_info&&d.room_info.name)||roomId}`;
+    document.getElementById('ra-eff').textContent=(d.efficiency_score!=null?d.efficiency_score:'—')+'%';
+    document.getElementById('ra-eff').style.color=d.efficiency_score>=60?'var(--green)':'var(--red)';
+    document.getElementById('ra-sens').textContent=(d.sensors||[]).length;
+    document.getElementById('ra-devs').textContent=(d.devices||[]).length;
+    // Recs
+    const recsEl=document.getElementById('ra-recs');
+    recsEl.innerHTML='';
+    if(d.recommendations&&d.recommendations.length){
+      d.recommendations.forEach(rec=>{recsEl.innerHTML+=`<div class="ra-rec"><i class="fas fa-lightbulb"></i>${rec}</div>`});
+    }
+    openModal('roomAnalytics');
+    // Chart
+    const ec=d.energy_consumption||[];
+    const ctx=document.getElementById('chartRoomEnergy');
+    if(raChart){raChart.destroy()}
+    raChart=new Chart(ctx,{type:'line',data:{labels:ec.map(i=>new Date(i.timestamp*1000).toLocaleTimeString('vi',{hour:'2-digit',minute:'2-digit'})),datasets:[{label:'kW',data:ec.map(i=>i.value),borderColor:'#fbbf24',backgroundColor:'rgba(251,191,36,.12)',fill:true,tension:.3,pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#8899aa',maxTicksLimit:6},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{color:'#8899aa'},grid:{color:'rgba(255,255,255,.04)'}}},plugins:{legend:{display:false}}}});
+  }catch(e){toast('error','Failed to load analytics')}
+}
 
-        // ─── ADD ROOM ───
-        async function addRoom() {
-            const id = document.getElementById('ar-id').value.trim();
-            const name = document.getElementById('ar-name').value.trim();
-            const area = parseFloat(document.getElementById('ar-area').value);
-            const floor = parseInt(document.getElementById('ar-floor').value);
-            const building = document.getElementById('ar-building').value.trim();
-            if (!id || !name || !area || !floor || !building) { toast('error', 'Fill all fields'); return }
-            try {
-                const r = await fetch('/api/rooms/add', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ room_id: id, name, area, floor, building }) });
-                const d = await r.json();
-                if (d.success) { toast('success', d.message || 'Room added'); closeModal('roomAdd'); document.getElementById('ar-id').value = document.getElementById('ar-name').value = document.getElementById('ar-area').value = document.getElementById('ar-floor').value = document.getElementById('ar-building').value = ''; }
-                else toast('error', d.error || 'Failed');
-            } catch (e) { toast('error', 'Connection error') }
-        }
+// ─── ADD ROOM ───
+async function addRoom(){
+  const id=document.getElementById('ar-id').value.trim();
+  const name=document.getElementById('ar-name').value.trim();
+  const area=parseFloat(document.getElementById('ar-area').value);
+  const floor=parseInt(document.getElementById('ar-floor').value);
+  const building=document.getElementById('ar-building').value.trim();
+  if(!id||!name||!area||!floor||!building){toast('error','Fill all fields');return}
+  try{
+    const r=await fetch('/api/rooms/add',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({room_id:id,name,area,floor,building})});
+    const d=await r.json();
+    if(d.success){toast('success',d.message||'Room added');closeModal('roomAdd');document.getElementById('ar-id').value=document.getElementById('ar-name').value=document.getElementById('ar-area').value=document.getElementById('ar-floor').value=document.getElementById('ar-building').value='';}
+    else toast('error',d.error||'Failed');
+  }catch(e){toast('error','Connection error')}
+}
 
-        // ─── ADD SENSOR ───
-        function preAddSensor(roomId = '') {
-            // populate room select
-            const sel = document.getElementById('as-room');
-            sel.innerHTML = '<option value="">-- Select Room --</option>';
-            roomsCache.forEach(r => { sel.innerHTML += `<option value="${r.room_id}" ${r.room_id === roomId ? 'selected' : ''}>${r.name}</option>` });
-            openModal('sensorAdd');
-        }
-        async function addSensor() {
-            const id = document.getElementById('as-id').value.trim();
-            const room = document.getElementById('as-room').value;
-            const type = document.getElementById('as-type').value;
-            const unit = document.getElementById('as-unit').value.trim();
-            if (!id || !room || !type || !unit) { toast('error', 'Fill all fields'); return }
-            try {
-                const r = await fetch('/api/sensors/add', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sensor_id: id, room_id: room, sensor_type: type, unit }) });
-                const d = await r.json();
-                if (d.success) { toast('success', d.message || 'Sensor added'); closeModal('sensorAdd'); document.getElementById('as-id').value = document.getElementById('as-unit').value = ''; }
-                else toast('error', d.error || 'Failed');
-            } catch (e) { toast('error', 'Connection error') }
-        }
+// ─── ADD SENSOR ───
+function preAddSensor(roomId=''){
+  // populate room select
+  const sel=document.getElementById('as-room');
+  sel.innerHTML='<option value="">-- Select Room --</option>';
+  roomsCache.forEach(r=>{sel.innerHTML+=`<option value="${r.room_id}" ${r.room_id===roomId?'selected':''}>${r.name}</option>`});
+  openModal('sensorAdd');
+}
+async function addSensor(){
+  const id=document.getElementById('as-id').value.trim();
+  const room=document.getElementById('as-room').value;
+  const type=document.getElementById('as-type').value;
+  const unit=document.getElementById('as-unit').value.trim();
+  if(!id||!room||!type||!unit){toast('error','Fill all fields');return}
+  try{
+    const r=await fetch('/api/sensors/add',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sensor_id:id,room_id:room,sensor_type:type,unit})});
+    const d=await r.json();
+    if(d.success){toast('success',d.message||'Sensor added');closeModal('sensorAdd');document.getElementById('as-id').value=document.getElementById('as-unit').value='';}
+    else toast('error',d.error||'Failed');
+  }catch(e){toast('error','Connection error')}
+}
 
-        // ─── ADD DEVICE ───
-        function openAddDevice() {
-            const sel = document.getElementById('ad-room');
-            sel.innerHTML = '<option value="">-- Select Room --</option>';
-            roomsCache.forEach(r => { sel.innerHTML += `<option value="${r.room_id}">${r.name}</option>` });
-            openModal('deviceAdd');
-        }
-        async function addDevice() {
-            const id = document.getElementById('ad-id').value.trim();
-            const room = document.getElementById('ad-room').value;
-            const type = document.getElementById('ad-type').value;
-            const name = document.getElementById('ad-name').value.trim();
-            if (!id || !room || !type || !name) { toast('error', 'Fill all fields'); return }
-            try {
-                const r = await fetch('/api/devices/add', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ device_id: id, room_id: room, device_type: type, device_name: name }) });
-                const d = await r.json();
-                if (d.success) { toast('success', d.message || 'Device added'); closeModal('deviceAdd'); fetchDevices(); document.getElementById('ad-id').value = document.getElementById('ad-name').value = ''; }
-                else toast('error', d.error || 'Failed');
-            } catch (e) { toast('error', 'Connection error') }
-        }
+// ─── ADD DEVICE ───
+function openAddDevice(){
+  const sel=document.getElementById('ad-room');
+  sel.innerHTML='<option value="">-- Select Room --</option>';
+  roomsCache.forEach(r=>{sel.innerHTML+=`<option value="${r.room_id}">${r.name}</option>`});
+  openModal('deviceAdd');
+}
+async function addDevice(){
+  const id=document.getElementById('ad-id').value.trim();
+  const room=document.getElementById('ad-room').value;
+  const type=document.getElementById('ad-type').value;
+  const name=document.getElementById('ad-name').value.trim();
+  if(!id||!room||!type||!name){toast('error','Fill all fields');return}
+  try{
+    const r=await fetch('/api/devices/add',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({device_id:id,room_id:room,device_type:type,device_name:name})});
+    const d=await r.json();
+    if(d.success){toast('success',d.message||'Device added');closeModal('deviceAdd');fetchDevices();document.getElementById('ad-id').value=document.getElementById('ad-name').value='';}
+    else toast('error',d.error||'Failed');
+  }catch(e){toast('error','Connection error')}
+}
 
-        // ─── DELETE CONFIRM ───
-        function confirmDeleteRoom(rid, name) {
-            document.getElementById('confirmTitle').textContent = 'Delete Room?';
-            document.getElementById('confirmMsg').textContent = `Remove "${name}" and all its sensors & devices?`;
-            document.getElementById('confirmOk').onclick = () => { doDeleteRoom(rid); closeConfirm() };
-            document.getElementById('confirmOverlay').classList.add('show');
-        }
-        async function doDeleteRoom(rid) {
-            try {
-                const r = await fetch('/api/rooms/delete', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ room_id: rid }) });
-                const d = await r.json();
-                if (d.success) { toast('success', d.message || 'Room deleted'); }
-                else toast('error', d.error || 'Failed');
-            } catch (e) { toast('error', 'Connection error') }
-        }
-        function confirmDeleteSensor(sid) {
-            document.getElementById('confirmTitle').textContent = 'Delete Sensor?';
-            document.getElementById('confirmMsg').textContent = `Remove sensor "${sid}" permanently?`;
-            document.getElementById('confirmOk').onclick = () => { doDeleteSensor(sid); closeConfirm() };
-            document.getElementById('confirmOverlay').classList.add('show');
-        }
-        async function doDeleteSensor(sid) {
-            try {
-                const r = await fetch('/api/sensors/delete', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sensor_id: sid }) });
-                const d = await r.json();
-                if (d.success) { toast('success', d.message || 'Sensor deleted'); renderSensors(); }
-                else toast('error', d.error || 'Failed');
-            } catch (e) { toast('error', 'Connection error') }
-        }
-        function closeConfirm() { document.getElementById('confirmOverlay').classList.remove('show') }
+// ─── DELETE CONFIRM ───
+function confirmDeleteRoom(rid,name){
+  document.getElementById('confirmTitle').textContent='Delete Room?';
+  document.getElementById('confirmMsg').textContent=`Remove "${name}" and all its sensors & devices?`;
+  document.getElementById('confirmOk').onclick=()=>{doDeleteRoom(rid);closeConfirm()};
+  document.getElementById('confirmOverlay').classList.add('show');
+}
+async function doDeleteRoom(rid){
+  try{
+    const r=await fetch('/api/rooms/delete',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({room_id:rid})});
+    const d=await r.json();
+    if(d.success){toast('success',d.message||'Room deleted');}
+    else toast('error',d.error||'Failed');
+  }catch(e){toast('error','Connection error')}
+}
+function confirmDeleteSensor(sid){
+  document.getElementById('confirmTitle').textContent='Delete Sensor?';
+  document.getElementById('confirmMsg').textContent=`Remove sensor "${sid}" permanently?`;
+  document.getElementById('confirmOk').onclick=()=>{doDeleteSensor(sid);closeConfirm()};
+  document.getElementById('confirmOverlay').classList.add('show');
+}
+async function doDeleteSensor(sid){
+  try{
+    const r=await fetch('/api/sensors/delete',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({sensor_id:sid})});
+    const d=await r.json();
+    if(d.success){toast('success',d.message||'Sensor deleted');renderSensors();}
+    else toast('error',d.error||'Failed');
+  }catch(e){toast('error','Connection error')}
+}
+function closeConfirm(){document.getElementById('confirmOverlay').classList.remove('show')}
 
-        // ─── SEARCH ───
-        let searchTimeout = null;
-        async function onSearch(e) {
-            clearTimeout(searchTimeout);
-            const q = e.target.value.trim();
-            const dd = document.getElementById('searchDropdown');
-            if (q.length < 2) { dd.classList.remove('show'); return }
-            searchTimeout = setTimeout(async () => {
-                try {
-                    const r = await fetch('/api/search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: q }) });
-                    const d = await r.json();
-                    dd.innerHTML = '';
-                    const all = [
-                        ...(d.rooms || []).map(i => ({ type: 'Room', name: i.name, sub: `ID: ${i.room_id} · Floor ${i.floor}`, action: () => openRoomAnalytics(i.room_id) })),
-                        ...(d.sensors || []).map(i => ({ type: 'Sensor', name: i.sensor_id, sub: `${i.sensor_type} in ${i.room_name || i.room_id}`, action: null })),
-                        ...(d.devices || []).map(i => ({ type: 'Device', name: i.device_name, sub: `${i.device_type} · ${i.status}`, action: null }))
-                    ];
-                    if (all.length === 0) { dd.innerHTML = '<div class="search-item" style="color:var(--t3);text-align:center">No results</div>' }
-                    else all.forEach(item => {
-                        const el = document.createElement('div');
-                        el.className = 'search-item';
-                        el.innerHTML = `<div class="si-type">${item.type}</div><div class="si-name">${item.name}</div><div class="si-sub">${item.sub}</div>`;
-                        if (item.action) el.onclick = () => { item.action(); dd.classList.remove('show'); e.target.value = '' };
-                        dd.appendChild(el);
-                    });
-                    dd.classList.add('show');
-                } catch (er) { dd.classList.remove('show') }
-            }, 300);
-        }
-        document.addEventListener('click', e => { if (!e.target.closest('.search-wrap')) document.getElementById('searchDropdown').classList.remove('show') });
+// ─── SEARCH ───
+let searchTimeout=null;
+async function onSearch(e){
+  clearTimeout(searchTimeout);
+  const q=e.target.value.trim();
+  const dd=document.getElementById('searchDropdown');
+  if(q.length<2){dd.classList.remove('show');return}
+  searchTimeout=setTimeout(async()=>{
+    try{
+      const r=await fetch('/api/search',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:q})});
+      const d=await r.json();
+      dd.innerHTML='';
+      const all=[
+        ...(d.rooms||[]).map(i=>({type:'Room',name:i.name,sub:`ID: ${i.room_id} · Floor ${i.floor}`,action:()=>openRoomAnalytics(i.room_id)})),
+        ...(d.sensors||[]).map(i=>({type:'Sensor',name:i.sensor_id,sub:`${i.sensor_type} in ${i.room_name||i.room_id}`,action:null})),
+        ...(d.devices||[]).map(i=>({type:'Device',name:i.device_name,sub:`${i.device_type} · ${i.status}`,action:null}))
+      ];
+      if(all.length===0){dd.innerHTML='<div class="search-item" style="color:var(--t3);text-align:center">No results</div>'}
+      else all.forEach(item=>{
+        const el=document.createElement('div');
+        el.className='search-item';
+        el.innerHTML=`<div class="si-type">${item.type}</div><div class="si-name">${item.name}</div><div class="si-sub">${item.sub}</div>`;
+        if(item.action) el.onclick=()=>{item.action();dd.classList.remove('show');e.target.value=''};
+        dd.appendChild(el);
+      });
+      dd.classList.add('show');
+    }catch(er){dd.classList.remove('show')}
+  },300);
+}
+document.addEventListener('click',e=>{if(!e.target.closest('.search-wrap'))document.getElementById('searchDropdown').classList.remove('show')});
 
-        // ─── CHAT ───
-        function toggleChat() { document.getElementById('chatBox').classList.toggle('show') }
-        async function sendChat() {
-            const inp = document.getElementById('chatInput');
-            const q = inp.value.trim();
-            if (!q) return;
-            inp.value = '';
-            addMsg('user', q);
-            const loadEl = addMsg('ai', '<div class="spinner"></div> Thinking…');
-            try {
-                const r = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: q, language: lang }) });
-                const d = await r.json();
-                loadEl.remove();
-                addMsg('ai', d.response || 'No response');
-            } catch (e) { loadEl.remove(); addMsg('ai', 'Connection error. Try again.') }
-        }
-        function addMsg(role, text) {
-            const c = document.getElementById('chatMsgs');
-            const el = document.createElement('div');
-            el.className = 'msg ' + role;
-            const time = new Date().toLocaleTimeString('vi', { hour: '2-digit', minute: '2-digit' });
-            el.innerHTML = `<div class="msg-av ${role === 'ai' ? 'ai' : 'usr'}"><i class="fas ${role === 'ai' ? 'fa-robot' : 'fa-user'}"></i></div><div><div class="msg-bubble">${text.replace(/\n/g, '<br>')}</div><div class="msg-time">${time}</div></div>`;
-            c.appendChild(el);
-            c.scrollTop = c.scrollHeight;
-            return el;
-        }
+// ─── CHAT ───
+function toggleChat(){document.getElementById('chatBox').classList.toggle('show')}
+async function sendChat(){
+  const inp=document.getElementById('chatInput');
+  const q=inp.value.trim();
+  if(!q) return;
+  inp.value='';
+  addMsg('user',q);
+  const loadEl=addMsg('ai','<div class="spinner"></div> Thinking…');
+  try{
+    const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:q,language:lang})});
+    const d=await r.json();
+    loadEl.remove();
+    addMsg('ai',d.response||'No response');
+  }catch(e){loadEl.remove();addMsg('ai','Connection error. Try again.')}
+}
+function addMsg(role,text){
+  const c=document.getElementById('chatMsgs');
+  const el=document.createElement('div');
+  el.className='msg '+role;
+  const time=new Date().toLocaleTimeString('vi',{hour:'2-digit',minute:'2-digit'});
+  el.innerHTML=`<div class="msg-av ${role==='ai'?'ai':'usr'}"><i class="fas ${role==='ai'?'fa-robot':'fa-user'}"></i></div><div><div class="msg-bubble">${text.replace(/\n/g,'<br>')}</div><div class="msg-time">${time}</div></div>`;
+  c.appendChild(el);
+  c.scrollTop=c.scrollHeight;
+  return el;
+}
 
-        // ─── MODAL ───
-        function openModal(id) {
-            // pre-fill room selects for device add
-            if (id === 'deviceAdd') {
-                const sel = document.getElementById('ad-room');
-                sel.innerHTML = '<option value="">-- Select Room --</option>';
-                roomsCache.forEach(r => { sel.innerHTML += `<option value="${r.room_id}">${r.name}</option>` });
-            }
-            if (id === 'sensorAdd') {
-                const sel = document.getElementById('as-room');
-                sel.innerHTML = '<option value="">-- Select Room --</option>';
-                roomsCache.forEach(r => { sel.innerHTML += `<option value="${r.room_id}">${r.name}</option>` });
-            }
-            document.getElementById('modal-' + id).classList.add('show');
-        }
-        function closeModal(id) { document.getElementById('modal-' + id).classList.remove('show') }
-        // Close modal on overlay click
-        document.querySelectorAll('.modal-overlay').forEach(o => { o.addEventListener('click', e => { if (e.target === o) o.classList.remove('show') }) });
+// ─── MODAL ───
+function openModal(id){
+  // pre-fill room selects for device add
+  if(id==='deviceAdd'){
+    const sel=document.getElementById('ad-room');
+    sel.innerHTML='<option value="">-- Select Room --</option>';
+    roomsCache.forEach(r=>{sel.innerHTML+=`<option value="${r.room_id}">${r.name}</option>`});
+  }
+  if(id==='sensorAdd'){
+    const sel=document.getElementById('as-room');
+    sel.innerHTML='<option value="">-- Select Room --</option>';
+    roomsCache.forEach(r=>{sel.innerHTML+=`<option value="${r.room_id}">${r.name}</option>`});
+  }
+  document.getElementById('modal-'+id).classList.add('show');
+}
+function closeModal(id){document.getElementById('modal-'+id).classList.remove('show')}
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('show')})});
 
-        // ─── TOAST ───
-        function toast(type, msg) {
-            const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle' };
-            const w = document.getElementById('toastWrap');
-            const t = document.createElement('div');
-            t.className = 'toast ' + type;
-            t.innerHTML = `<i class="fas ${icons[type]}"></i>${msg}`;
-            w.appendChild(t);
-            setTimeout(() => t.remove(), 3200);
-        }
+// ─── TOAST ───
+function toast(type,msg){
+  const icons={success:'fa-check-circle',error:'fa-exclamation-circle',info:'fa-info-circle'};
+  const w=document.getElementById('toastWrap');
+  const t=document.createElement('div');
+  t.className='toast '+type;
+  t.innerHTML=`<i class="fas ${icons[type]}"></i>${msg}`;
+  w.appendChild(t);
+  setTimeout(()=>t.remove(),3200);
+}
 
-        // ─── LANG ───
-        function setLang(l, btn) {
-            lang = l;
-            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        }
+// ─── LANG ───
+function setLang(l,btn){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
 
-        // ─── FULLSCREEN ───
-        function toggleFullscreen() {
-            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-            else document.exitFullscreen();
-        }
+// ─── FULLSCREEN ───
+function toggleFullscreen(){
+  if(!document.fullscreenElement)document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+}
 
-        // ─── INIT ───
-        document.addEventListener('DOMContentLoaded', () => {
-            connectWS();
-            initCharts();
-        });
-    </script>
+// ─── INIT ───
+document.addEventListener('DOMContentLoaded',()=>{
+  connectWS();
+  initCharts();
+});
+</script>
 </body>
-
 </html>

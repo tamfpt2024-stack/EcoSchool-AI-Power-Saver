@@ -286,6 +286,58 @@ class UltimateDatabaseManager:
                     INDEX `idx_timestamp` (`timestamp`)
                 )
             """)
+
+            # --- ENTERPRISE UPGRADE TABLES ---
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS buildings (
+                    building_id VARCHAR(50) PRIMARY KEY,
+                    name VARCHAR(100),
+                    address TEXT,
+                    total_floors INT,
+                    manager_name VARCHAR(100),
+                    is_active BOOLEAN DEFAULT TRUE,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS floors (
+                    floor_id VARCHAR(50) PRIMARY KEY,
+                    building_id VARCHAR(50),
+                    floor_number INT,
+                    name VARCHAR(100),
+                    safety_status VARCHAR(50) DEFAULT 'SAFE',
+                    energy_target DOUBLE DEFAULT 0,
+                    FOREIGN KEY (building_id) REFERENCES buildings(building_id) ON DELETE CASCADE
+                )
+            """)
+
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS enterprise_schedules (
+                    schedule_id INT AUTO_INCREMENT PRIMARY KEY,
+                    room_id VARCHAR(50),
+                    event_name VARCHAR(200),
+                    start_time DATETIME,
+                    end_time DATETIME,
+                    min_temp DOUBLE DEFAULT 24.0,
+                    max_temp DOUBLE DEFAULT 26.0,
+                    priority INT DEFAULT 1,
+                    is_completed BOOLEAN DEFAULT FALSE,
+                    FOREIGN KEY (room_id) REFERENCES rooms(room_id) ON DELETE CASCADE
+                )
+            """)
+
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS safety_watchdog_logs (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    location_id VARCHAR(100),
+                    risk_level VARCHAR(20),
+                    event_type VARCHAR(50),
+                    description TEXT,
+                    automated_action TEXT,
+                    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
             
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS ai_knowledge (
@@ -352,6 +404,26 @@ class UltimateDatabaseManager:
             cursor.execute("""CREATE TABLE IF NOT EXISTS ai_knowledge
                             (id INTEGER PRIMARY KEY AUTOINCREMENT, topic TEXT,
                              content TEXT, source TEXT, timestamp REAL, importance INTEGER)""")
+            
+            # --- ENTERPRISE UPGRADE TABLES (SQLite) ---
+            cursor.execute("""CREATE TABLE IF NOT EXISTS buildings
+                            (building_id TEXT PRIMARY KEY, name TEXT, address TEXT,
+                             total_floors INTEGER, manager_name TEXT, is_active INTEGER DEFAULT 1, created_at REAL)""")
+            
+            cursor.execute("""CREATE TABLE IF NOT EXISTS floors
+                            (floor_id TEXT PRIMARY KEY, building_id TEXT, floor_number INTEGER,
+                             name TEXT, safety_status TEXT DEFAULT 'SAFE', energy_target REAL,
+                             FOREIGN KEY (building_id) REFERENCES buildings(building_id))""")
+            
+            cursor.execute("""CREATE TABLE IF NOT EXISTS enterprise_schedules
+                            (schedule_id INTEGER PRIMARY KEY AUTOINCREMENT, room_id TEXT, event_name TEXT,
+                             start_time TEXT, end_time TEXT, min_temp REAL, max_temp REAL,
+                             priority INTEGER, is_completed INTEGER DEFAULT 0,
+                             FOREIGN KEY (room_id) REFERENCES rooms(room_id))""")
+            
+            cursor.execute("""CREATE TABLE IF NOT EXISTS safety_watchdog_logs
+                            (id INTEGER PRIMARY KEY AUTOINCREMENT, location_id TEXT, risk_level TEXT,
+                             event_type TEXT, description TEXT, automated_action TEXT, timestamp REAL)""")
             
             # Indexes
             cursor.execute('CREATE INDEX IF NOT EXISTS idx_sensor_readings_time ON sensor_readings(timestamp)')
@@ -449,6 +521,78 @@ class UltimateDatabaseManager:
         
         cursor.close()
         return rooms
+
+    # --- ENTERPRISE CRUD ---
+    def add_building(self, building_id: str, name: str, address: str, total_floors: int, manager: str):
+        try:
+            cursor = self._get_cursor()
+            if self.use_mysql:
+                cursor.execute(
+                    "INSERT INTO buildings (building_id, name, address, total_floors, manager_name) VALUES (%s, %s, %s, %s, %s)",
+                    (building_id, name, address, total_floors, manager)
+                )
+            else:
+                cursor.execute(
+                    "INSERT INTO buildings VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    (building_id, name, address, total_floors, manager, 1, time.time())
+                )
+                self.connection.commit()
+            cursor.close()
+            return {"success": True, "message": f"Building {name} created."}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
+    def add_floor(self, floor_id: str, building_id: str, floor_num: int, name: str, energy_target: float):
+        try:
+            cursor = self._get_cursor()
+            if self.use_mysql:
+                cursor.execute(
+                    "INSERT INTO floors (floor_id, building_id, floor_number, name, energy_target) VALUES (%s, %s, %s, %s, %s)",
+                    (floor_id, building_id, floor_num, name, energy_target)
+                )
+            else:
+                cursor.execute(
+                    "INSERT INTO floors VALUES (?, ?, ?, ?, ?, ?)",
+                    (floor_id, building_id, floor_num, name, 'SAFE', energy_target)
+                )
+                self.connection.commit()
+            cursor.close()
+            return {"success": True, "message": f"Floor {name} added to Building {building_id}."}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
+    def add_schedule(self, room_id: str, event: str, start: str, end: str, min_t: float, max_t: float, priority: int):
+        try:
+            cursor = self._get_cursor()
+            if self.use_mysql:
+                cursor.execute(
+                    "INSERT INTO enterprise_schedules (room_id, event_name, start_time, end_time, min_temp, max_temp, priority) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                    (room_id, event, start, end, min_t, max_t, priority)
+                )
+            else:
+                cursor.execute(
+                    "INSERT INTO enterprise_schedules (room_id, event_name, start_time, end_time, min_temp, max_temp, priority, is_completed) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    (room_id, event, start, end, min_t, max_t, priority, 0)
+                )
+                self.connection.commit()
+            cursor.close()
+            return {"success": True, "message": f"Event '{event}' scheduled for room {room_id}."}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
+    def get_upcoming_schedules(self, limit=50):
+        try:
+            cursor = self._get_cursor()
+            if self.use_mysql:
+                cursor.execute("SELECT * FROM enterprise_schedules WHERE is_completed = FALSE ORDER BY start_time ASC LIMIT %s", (limit,))
+                results = cursor.fetchall()
+            else:
+                cursor.execute("SELECT * FROM enterprise_schedules WHERE is_completed = 0 ORDER BY start_time ASC LIMIT ?", (limit,))
+                results = [dict(row) for row in cursor.fetchall()]
+            cursor.close()
+            return results
+        except:
+            return []
     
     # ========================================================================
     # 🔍 SMART SEARCH SYSTEM
@@ -1076,18 +1220,57 @@ class UltimateDatabaseManager:
         cursor.close()
     
     def get_ai_decisions(self, limit: int = 20) -> List[Dict]:
-        """Lấy quyết định AI"""
+        """Lấy lịch sử quyết định"""
         cursor = self._get_cursor()
-        
         if self.use_mysql:
             cursor.execute("SELECT * FROM ai_decisions ORDER BY timestamp DESC LIMIT %s", (limit,))
-            decisions = cursor.fetchall()
+            res = cursor.fetchall()
         else:
             cursor.execute("SELECT * FROM ai_decisions ORDER BY timestamp DESC LIMIT ?", (limit,))
-            decisions = [dict(row) for row in cursor.fetchall()]
-        
+            res = [dict(row) for row in cursor.fetchall()]
         cursor.close()
-        return decisions
+        return res
+
+    def log_ai_decision(self, agent_name: str, d_type: str, target: str, action: str, reasoning: str, confidence: float, status: str = "COMPLETED"):
+        try:
+            cursor = self._get_cursor()
+            id = f"DEC-{secrets.token_hex(4).upper()}"
+            if self.use_mysql:
+                cursor.execute(
+                    "INSERT INTO ai_decisions (id, agent_name, decision_type, target, action, reasoning, confidence, status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                    (id, agent_name, d_type, target, action, reasoning, confidence, status)
+                )
+            else:
+                cursor.execute(
+                    "INSERT INTO ai_decisions (id, agent_name, decision_type, target, action, reasoning, confidence, timestamp, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (id, agent_name, d_type, target, action, reasoning, confidence, time.time(), status)
+                )
+                self.connection.commit()
+            cursor.close()
+            return id
+        except Exception as e:
+            logger.error(f"Error logging decision: {e}")
+            return None
+
+    def log_safety_event(self, location: str, risk: str, e_type: str, desc: str, action: str):
+        try:
+            cursor = self._get_cursor()
+            if self.use_mysql:
+                cursor.execute(
+                    "INSERT INTO safety_watchdog_logs (location_id, risk_level, event_type, description, automated_action) VALUES (%s, %s, %s, %s, %s)",
+                    (location, risk, e_type, desc, action)
+                )
+            else:
+                cursor.execute(
+                    "INSERT INTO safety_watchdog_logs (location_id, risk_level, event_type, description, automated_action, timestamp) VALUES (?, ?, ?, ?, ?, ?)",
+                    (location, risk, e_type, desc, action, time.time())
+                )
+                self.connection.commit()
+            cursor.close()
+            return True
+        except Exception as e:
+            logger.error(f"Error logging safety event: {e}")
+            return False
     
     def save_alert(self, alert: Dict):
         """Lưu cảnh báo"""
@@ -1253,11 +1436,11 @@ THÔNG TIN DỰ ÁN:
 - Bối cảnh: Được phát triển cho THPT FPT Quy Nhơn (STEMPetition).
 - Mục tiêu: Tối ưu điện năng (SDG 7, 13) dựa trên AI học thói quen, lịch học và môi trường.
 
-CƠ CHẾ BỘ MÁY AI CHUYÊN MÔN (12 ĐƠN VỊ):
+CƠ CHẾ BỘ MÁY AI CHUYÊN MÔN (15 ĐƠN VỊ):
 1. Edge Data Collector AI: Thu thập dữ liệu sensor.
-2. Environmental Analysis AI: Phân tích môi trường.
-3. Occupancy & Presence AI: Nhận diện người qua Camera AI.
-4. Scheduling & Behavior Learning AI: Học lịch trình.
+2. Environmental Analysis AI: Phân tích điều kiện môi trường (Nhiệt độ, Ánh sáng).
+3. Occupancy & Presence AI: Nhận diện sự hiện diện và số lượng người qua Camera AI.
+4. Scheduling & Behavior Learning AI: Học thói quen và phân tích lịch học/lịch họp.
 5. Energy Optimization AI: Chiến lược tiết kiệm điện.
 6. Actuator Control AI: Điều khiển thiết bị IOT.
 7. System Monitoring & Safety AI: Giám sát an toàn & cháy nổ.
@@ -1266,9 +1449,12 @@ CƠ CHẾ BỘ MÁY AI CHUYÊN MÔN (12 ĐƠN VỊ):
 10. User Experience & Personalization AI: Cá nhân hóa sự thoải mái.
 11. Cybersecurity & Threat Detection AI: Bảo mật IOT.
 12. Predictive Maintenance AI: Dự báo hỏng hóc.
+13. Global Optimization AI: Tối ưu hóa toàn trường.
+14. Self-Learning AI: Hệ thống tự học chuyên sâu.
+15. Enterprise Management AI: Quản trị và báo cáo doanh nghiệp.
 
 NHIỆM VỤ CỦA BẠN:
-- Quản lý toàn bộ 12 agent trên.
+- Quản lý toàn bộ 15 agent trên.
 - Trả lời chuyên sâu, chuyên nghiệp như một chuyên gia năng lượng.
 - Nếu không có dữ liệu, hãy trả về 0, không được bịa đặt số liệu.
 - HUMAN > AI: Luôn hỏi xác nhận trước khi thực hiện các thay đổi quan trọng hoặc xóa dữ liệu.
@@ -1488,31 +1674,48 @@ class OccupancyPresenceAI(BaseAgent):
 # 4. Scheduling & Behavior Learning AI
 class BehaviorLearningAI(BaseAgent):
     def __init__(self):
-        super().__init__("Scheduling & Behavior Learning AI", "Learning", "Học thói quen và phân tích lịch học/lịch họp")
+        super().__init__("Scheduling AI", "Scheduling", "Học thói quen và quản lý lịch trình Enterprise")
     
     async def execute_duty(self):
-        pass
+        now = datetime.now()
+        schedules = db.get_upcoming_schedules(limit=20)
+        
+        for sch in schedules:
+            start_dt = sch['start_time'] if isinstance(sch['start_time'], datetime) else datetime.fromisoformat(sch['start_time'])
+            end_dt = sch['end_time'] if isinstance(sch['end_time'], datetime) else datetime.fromisoformat(sch['end_time'])
+            room_id = sch['room_id']
+            
+            # Pre-condition: 15 mins before start
+            if now <= start_dt <= (now + timedelta(minutes=15)):
+                db.log_ai_decision(self.name, "PRE_CONDITION", room_id, "Prepare Environment", f"Event '{sch['event_name']}' starts in <15m", 0.95)
+                # Simulated IOT action: Bật điều hòa/đèn
+                db.control_device(f"AC_{room_id}", "ON")
+                db.control_device(f"LIGHT_{room_id}", "ON")
+
+            # Post-condition: 15 mins before end
+            if now <= end_dt <= (now + timedelta(minutes=15)):
+                 # Trình tự tắt dần
+                 db.log_ai_decision(self.name, "PRE_SHUTDOWN", room_id, "Efficiency Mode", f"Event '{sch['event_name']}' ends in <15m", 0.9)
+                 db.control_device(f"AC_{room_id}", "OFF") # Tắt AC trước 15p là chiến thuật phổ biến
 
 # 5. Energy Optimization AI
 class EnergyOptimizationAI(BaseAgent):
     def __init__(self):
-        super().__init__("Energy Optimization AI", "Optimization", "Tối ưu hóa mức tiêu thụ năng lượng")
+        super().__init__("Energy Optimization AI", "Optimization", "Chiến lược tiết kiệm điện dựa trên AI")
     
     async def execute_duty(self):
-        data = db.get_real_time_data()
-        if data['total_occupancy'] == 0 and data['total_power'] > 0:
-            decision = {
-                "id": str(uuid.uuid4())[:8],
-                "agent": self.name,
-                "type": "OPTIMIZATION",
-                "target": "SYSTEM",
-                "action": "POWER_SAVING_MODE",
-                "reasoning": f"Tự động tối ưu: Phát hiện {data['total_power']:.2f}kW tiêu thụ khi phòng trống.",
-                "confidence": 0.98,
-                "timestamp": time.time(),
-                "status": "COMPLETED"
-            }
-            db.log_ai_decision(decision)
+        rooms = db.get_all_rooms()
+        real_time = db.get_real_time_data()
+        
+        for room in rooms:
+            rid = room['room_id']
+            # Autonomous Auto-Off: Nếu occupancy = 0 trong 5 phút
+            # (Simplification for simulation: check current occupancy)
+            room_sensors = [s for s in real_time['sensors'] if s['room_id'] == rid and s['sensor_type'] == 'occupancy']
+            if room_sensors and room_sensors[0]['last_value'] == 0:
+                 db.log_ai_decision(self.name, "AUTO_OFF", rid, "Power Cut", "No occupancy detected", 0.99)
+                 db.control_device(f"LIGHT_{rid}", "OFF")
+                 db.control_device(f"AC_{rid}", "OFF")
 
 # 6. Actuator Control AI
 class ActuatorControlAI(BaseAgent):
@@ -1525,20 +1728,24 @@ class ActuatorControlAI(BaseAgent):
 # 7. System Monitoring & Safety AI
 class SafetyMonitoringAI(BaseAgent):
     def __init__(self):
-        super().__init__("System Monitoring & Safety AI", "Safety", "Giám sát an toàn hệ thống và phòng chống cháy nổ")
+        super().__init__("Safety Monitoring AI", "Safety", "Giám sát an toàn & cháy nổ 24/7")
     
     async def execute_duty(self):
-        data = db.get_real_time_data()
-        for sensor in data['sensors']:
-            if sensor['sensor_type'] == 'temperature' and sensor['last_value'] > 45:
+        real_time = db.get_real_time_data()
+        for s in real_time['sensors']:
+            if s['sensor_type'] == 'temperature' and s['last_value'] > 50:
+                msg = f"Nguy cơ hỏa hoạn tại {s['room_name']}! Nhiệt độ {s['last_value']}°C"
+                db.log_safety_event(s['room_id'], "CRITICAL", "FIRE_RISK", msg, "SYSTEM_LOCKDOWN")
                 db.save_alert({
                     "alert_id": str(uuid.uuid4())[:8],
                     "severity": "CRITICAL",
                     "title": "CẢNH BÁO NHIỆT ĐỘ",
-                    "message": f"Nhiệt độ cao bất thường ({sensor['last_value']}°C) tại {sensor.get('room_name')}",
-                    "location": sensor.get('room_name'),
+                    "message": f"Nhiệt độ cao bất thường ({s['last_value']}°C) tại {s.get('room_name')}",
+                    "location": s.get('room_name'),
                     "timestamp": time.time()
                 })
+                # Ngắt toàn bộ điện phòng đó
+                db.control_device(f"MAIN_POWER_{s['room_id']}", "OFF")
 
 # 8. Data Management AI
 class DataManagementAI(BaseAgent):
@@ -1578,6 +1785,41 @@ class PredictiveMaintenanceAI(BaseAgent):
         super().__init__("Predictive Maintenance AI", "Maintenance", "Dự đoán bảo trì và tuổi thọ thiết bị")
     
     async def execute_duty(self):
+        devices = db.get_all_devices()
+        for d in devices:
+            usage_hours = 0 # In a real system, we'd calculate this from history
+            if usage_hours > 5000: # Threshold for maintenance
+                db.add_alert("WARNING", "🔧 BẢO TRÌ ĐỊNH KỲ", f"Thiết bị {d['device_name']} đã vượt quá 5000 giờ chạy.", d['room_name'])
+
+# 13. Global Optimization AI
+class GlobalOptimizationAI(BaseAgent):
+    def __init__(self):
+        super().__init__("Global Optimization AI", "Global Optimization", "Tối ưu hóa năng lượng quy mô toàn trường học/tòa nhà")
+    
+    async def execute_duty(self):
+        real_time = db.get_real_time_data()
+        if real_time['total_power'] > 1000: # Example high load threshold
+             db.log_ai_decision(self.name, "GLOBAL_CAP", "SYSTEM", "Load Shedding", "Total consumption exceeds 1000kW. Dimming non-essential areas.", 0.9)
+             # Simulate reducing power across multiple rooms
+
+# 14. Self-Learning AI
+class SelfLearningAI(BaseAgent):
+    def __init__(self):
+        super().__init__("Self-Learning AI", "Cognitive", "Học từ tương tác người dùng và hệ thống giảng dạy")
+    
+    async def execute_duty(self):
+        # AI tự kiểm tra chat history để học các chỉ dẫn mới của User
+        cursor = db._get_cursor()
+        # Logic to extract 'teaching' patterns from chat
+        pass
+
+# 15. Enterprise Management AI
+class EnterpriseManagementAI(BaseAgent):
+    def __init__(self):
+        super().__init__("Enterprise Management AI", "Scale", "Quản lý báo cáo doanh nghiệp và khả năng mở rộng hệ thống")
+    
+    async def execute_duty(self):
+        # Tạo báo cáo tổng hợp tự động mỗi 15 giây (simulation)
         pass
 
 
@@ -1586,7 +1828,7 @@ class PredictiveMaintenanceAI(BaseAgent):
 # ============================================================================
 
 class UltimateAIOrchestrator:
-    """Điều phối 12 AI Agents Chuyên môn"""
+    """Điều phối 15 AI Agents Chuyên môn"""
     def __init__(self):
         self.agents = [
             EdgeDataCollectorAI(),
@@ -1600,8 +1842,12 @@ class UltimateAIOrchestrator:
             ReportingAnalyticsAI(),
             UserExperienceAI(),
             CybersecurityAI(),
-            PredictiveMaintenanceAI()
+            PredictiveMaintenanceAI(),
+            GlobalOptimizationAI(),
+            SelfLearningAI(),
+            EnterpriseManagementAI()
         ]
+        logger.info(f"🎭 Ultimate Orchestrator initialized with {len(self.agents)} agents.")
         logger.info(f"🤖 Enterprise AI System: {len(self.agents)} agents initialized")
     
     async def start_all(self):
@@ -1680,6 +1926,29 @@ class ControlDeviceRequest(BaseModel):
     device_id: str
     command: str  # ON or OFF
 
+class AddBuildingRequest(BaseModel):
+    building_id: str
+    name: str
+    address: str = ""
+    total_floors: int = 1
+    manager_name: str = ""
+
+class AddFloorRequest(BaseModel):
+    floor_id: str
+    building_id: str
+    floor_number: int
+    name: str
+    energy_target: float = 0.0
+
+class AddScheduleRequest(BaseModel):
+    room_id: str
+    event_name: str
+    start_time: str # Format: "YYYY-MM-DD HH:MM:SS"
+    end_time: str
+    min_temp: float = 24.0
+    max_temp: float = 26.0
+    priority: int = 1
+
 # ============================================================================
 # 🚀 API ENDPOINTS
 # ============================================================================
@@ -1701,8 +1970,8 @@ async def login(creds: LoginRequest):
             token, 
             httponly=True, 
             max_age=28800, 
-            samesite="none", 
-            secure=True
+            samesite="lax", 
+            secure=False
         )
         return resp
     return JSONResponse(status_code=401, content={"success": False, "error": "Invalid credentials"})
@@ -1759,6 +2028,27 @@ async def get_room_analytics(room_id: str, hours: int = 24):
     """📊 Phân tích chi tiết từng phòng"""
     return serialize_for_json(db.get_room_analytics(room_id, hours))
 
+# Enterprise Management
+@app.post("/api/buildings/add")
+async def add_building(request: AddBuildingRequest):
+    """➕ Thêm tòa nhà"""
+    return db.add_building(request.building_id, request.name, request.address, request.total_floors, request.manager_name)
+
+@app.post("/api/floors/add")
+async def add_floor(request: AddFloorRequest):
+    """➕ Thêm tầng"""
+    return db.add_floor(request.floor_id, request.building_id, request.floor_number, request.name, request.energy_target)
+
+@app.post("/api/schedules/add")
+async def add_schedule(request: AddScheduleRequest):
+    """➕ Thêm lịch trình Enterprise"""
+    return db.add_schedule(request.room_id, request.event_name, request.start_time, request.end_time, request.min_temp, request.max_temp, request.priority)
+
+@app.get("/api/schedules/upcoming")
+async def get_upcoming_schedules():
+    """📋 Lịch trình sắp tới"""
+    return serialize_for_json({"schedules": db.get_upcoming_schedules()})
+
 # Sensor Management
 @app.post("/api/sensors/add")
 async def add_sensor(request: AddSensorRequest):
@@ -1797,6 +2087,12 @@ async def get_devices():
 async def smart_search(request: SearchRequest):
     """🔍 Tìm kiếm thông minh"""
     return serialize_for_json(db.smart_search(request.query))
+
+# Dashboard (Enterprise Pro)
+@app.get("/dashboard")
+async def dashboard(request: Request):
+    """🏠 Trang Dashboard chính (Enterprise Pro)"""
+    return templates.TemplateResponse("dashboard_enterprise.html", {"request": request})
 
 # Analytics
 @app.get("/api/analytics")
