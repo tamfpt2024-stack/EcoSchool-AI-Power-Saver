@@ -62,6 +62,12 @@ try:
 except:
     HAS_GEMINI = False
 
+try:
+    from supabase import create_client, Client
+    HAS_SUPABASE = True
+except:
+    HAS_SUPABASE = False
+
 # ============================================================================
 # CONFIGURATION
 # ============================================================================
@@ -78,6 +84,11 @@ MYSQL_CONFIG = {
     "port": int(os.getenv('MYSQL_PORT', 3306)),
     "autocommit": True
 }
+
+# Supabase Configuration
+SUPABASE_URL = os.getenv('SUPABASE_URL')
+SUPABASE_KEY = os.getenv('SUPABASE_KEY')
+SUPABASE_USER_ID = os.getenv('SUPABASE_USER_ID', "d3d21cfa-1380-423f-82a4-6fdc44e3f48e")
 
 def find_file(filename: str) -> Path:
     local = Path(__file__).parent / filename
@@ -128,7 +139,9 @@ class UltimateDatabaseManager:
     """
     
     def __init__(self):
+        self.use_supabase = False
         self.use_mysql = False
+        self.supabase_client: Optional[Client] = None
         self.connection = None
         self.db_type = "SQLite"
         self._init_connection()
@@ -136,6 +149,18 @@ class UltimateDatabaseManager:
     
     def _init_connection(self):
         """Khởi tạo kết nối database"""
+        # --- ƯU TIÊN 1: SUPABASE (CLOUD) ---
+        if HAS_SUPABASE and SUPABASE_URL and SUPABASE_KEY:
+            try:
+                self.supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
+                self.use_supabase = True
+                self.db_type = "Supabase"
+                logger.info("✅ Connected to Supabase (Cloud Database)")
+                return # If Supabase OK, we don't need MySQL/SQLite
+            except Exception as e:
+                logger.warning(f"⚠️  Supabase connection failed: {e}")
+        
+        # --- ƯU TIÊN 2: MYSQL (LOCAL) ---
         if HAS_MYSQL:
             try:
                 # Try to create database first
@@ -176,7 +201,11 @@ class UltimateDatabaseManager:
             return self.connection.cursor()
     
     def _init_schema(self):
-        """Khởi tạo schema database"""
+        """Khởi tạo schema database (Chỉ chạy cho MySQL/SQLite)"""
+        if self.use_supabase:
+            logger.info("ℹ️  Supabase selected: Skipping local schema initialization.")
+            return
+            
         cursor = self._get_cursor()
         
         if self.use_mysql:
@@ -510,6 +539,10 @@ class UltimateDatabaseManager:
     
     def get_all_rooms(self) -> List[Dict]:
         """Lấy danh sách phòng"""
+        if self.use_supabase:
+            response = self.supabase_client.table("rooms").select("*").eq("is_active", True).order("created_at", desc=True).execute()
+            return response.data
+            
         cursor = self._get_cursor()
         
         if self.use_mysql:
