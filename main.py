@@ -95,7 +95,13 @@ def find_file(filename: str) -> Path:
     return local if local.exists() else Path(filename)
 
 # Determine if running on Vercel
-IS_VERCEL = os.environ.get('VERCEL') == '1' or os.environ.get('PORT') is not None
+# Determine if running on Vercel
+IS_VERCEL = (
+    os.environ.get('VERCEL') == '1' or 
+    os.environ.get('VERCEL_ENV') is not None or
+    os.environ.get('NOW_REGION') is not None or
+    os.path.exists('/var/task')
+)
 
 log_handlers = [logging.StreamHandler(sys.stdout)]
 if not IS_VERCEL:
@@ -159,6 +165,9 @@ class UltimateDatabaseManager:
     
     def _init_connection(self):
         """Khởi tạo kết nối database"""
+        # [ROBUST] Always initialize connection immediately to prevent NoneType error
+        sqlite_path = "/tmp/ecoschool_ultimate.db" if IS_VERCEL else "ecoschool_ultimate.db"
+        self.connection = sqlite3.connect(sqlite_path, check_same_thread=False)
         # --- ƯU TIÊN 1: SUPABASE (CLOUD) ---
         if HAS_SUPABASE and SUPABASE_URL and SUPABASE_KEY:
             try:
@@ -1700,6 +1709,10 @@ class BaseAgent:
     
     async def auto_run(self):
         """Chạy tự động liên tục"""
+        if IS_VERCEL:
+            logger.info(f"⏭️  {self.name}: Background loop skipped on Vercel.")
+            return
+
         while self.active:
             try:
                 await self.execute_duty()
@@ -2017,6 +2030,18 @@ class AddScheduleRequest(BaseModel):
 # ============================================================================
 # 🚀 API ENDPOINTS
 # ============================================================================
+
+# Health Check
+@app.get("/api/health")
+async def health_check():
+    return {
+        "status": "online",
+        "database": db.db_type,
+        "is_vercel": IS_VERCEL,
+        "supabase": db.use_supabase,
+        "mysql": db.use_mysql,
+        "timestamp": time.time()
+    }
 
 # Auth
 @app.post("/login")
