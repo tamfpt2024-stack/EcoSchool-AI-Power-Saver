@@ -10,11 +10,5 @@
             "src": "/(.*)",
             "dest": "main.py"
         }
-    ],
-    "excludeFiles": [
-        "ecoschool_ultimate.db",
-        "ecoschool_ultimate.log",
-        "*.pyc",
-        "__pycache__"
     ]
 }
