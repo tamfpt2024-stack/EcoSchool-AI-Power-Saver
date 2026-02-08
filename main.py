@@ -517,6 +517,45 @@ class UltimateDatabaseManager:
         logger.info(f"✅ Database schema initialized ({self.db_type})")
     
     # ========================================================================
+    # 🔐 USER AUTHENTICATION
+    # ========================================================================
+    
+    def verify_user(self, username: str, password: str) -> Optional[Dict]:
+        """Xác thực người dùng đăng nhập"""
+        try:
+            # Hash password để so sánh
+            password_hash = hashlib.sha256(password.encode()).hexdigest()
+            
+            if self.use_supabase:
+                response = self.supabase_client.table("users").select("*").eq("username", username).eq("password_hash", password_hash).execute()
+                if response.data:
+                    logger.info(f"✅ User authenticated: {username}")
+                    return response.data[0]
+                return None
+            
+            cursor = self._get_cursor()
+            
+            if self.use_mysql:
+                cursor.execute("SELECT * FROM users WHERE username = %s AND password_hash = %s", (username, password_hash))
+                result = cursor.fetchone()
+            else:
+                cursor.execute("SELECT * FROM users WHERE username = ? AND password_hash = ?", (username, password_hash))
+                row = cursor.fetchone()
+                result = dict(row) if row else None
+            
+            cursor.close()
+            
+            if result:
+                logger.info(f"✅ User authenticated: {username}")
+                return result
+            
+            logger.warning(f"⚠️ Login failed for username: {username}")
+            return None
+        except Exception as e:
+            logger.error(f"❌ Auth error: {e}")
+            return None
+    
+    # ========================================================================
     # 🏢 ROOM MANAGEMENT (ADD + DELETE)
     # ========================================================================
     
