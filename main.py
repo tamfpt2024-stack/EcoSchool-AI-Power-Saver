@@ -166,7 +166,10 @@ class UltimateDatabaseManager:
                 self.use_supabase = True
                 self.db_type = "Supabase"
                 logger.info("✅ Connected to Supabase (Cloud Database)")
-                return # If Supabase OK, we don't need MySQL/SQLite
+                # Init local SQLite anyway as a safe scratchpad/fallback
+                sqlite_path = "/tmp/ecoschool_ultimate.db" if IS_VERCEL else "ecoschool_ultimate.db"
+                self.connection = sqlite3.connect(sqlite_path, check_same_thread=False)
+                return
             except Exception as e:
                 logger.warning(f"⚠️  Supabase connection failed: {e}")
         
@@ -2223,8 +2226,9 @@ async def websocket_endpoint(websocket: WebSocket):
 # Startup
 @app.on_event("startup")
 async def startup():
-    # Start AI agents
-    asyncio.create_task(ai_system.start_all())
+    # Start AI agents only if not on Vercel
+    if not IS_VERCEL:
+        asyncio.create_task(ai_system.start_all())
     
     logger.info("="*80)
     logger.info("🚀 EcoSchool AI ULTIMATE v12.0 - ONLINE")
