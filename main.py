@@ -42,13 +42,13 @@ import statistics
 # Database imports
 import sqlite3
 try:
-    import mysql.connector
-    from mysql.connector import Error as MySQLError
+    import pymysql
+    import pymysql.cursors
     HAS_MYSQL = True
 except:
     HAS_MYSQL = False
 
-import uvicorn
+import fastapi
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, HTMLResponse
@@ -164,7 +164,7 @@ class UltimateDatabaseManager:
         if HAS_MYSQL:
             try:
                 # Try to create database first
-                temp_conn = mysql.connector.connect(
+                temp_conn = pymysql.connect(
                     host=MYSQL_CONFIG["host"],
                     user=MYSQL_CONFIG["user"],
                     password=MYSQL_CONFIG["password"],
@@ -176,10 +176,18 @@ class UltimateDatabaseManager:
                 temp_conn.close()
                 
                 # Now connect to the database
-                self.connection = mysql.connector.connect(**MYSQL_CONFIG)
+                self.connection = pymysql.connect(
+                    host=MYSQL_CONFIG["host"],
+                    user=MYSQL_CONFIG["user"],
+                    password=MYSQL_CONFIG["password"],
+                    database=MYSQL_CONFIG["database"],
+                    port=MYSQL_CONFIG.get("port", 3306),
+                    autocommit=True,
+                    cursorclass=pymysql.cursors.DictCursor
+                )
                 self.use_mysql = True
                 self.db_type = "MySQL"
-                logger.info("✅ Connected to MySQL (HeidiSQL compatible)")
+                logger.info("✅ Connected to MySQL (HeidiSQL compatible via PyMySQL)")
             except Exception as e:
                 logger.warning(f"⚠️  MySQL connection failed: {e}")
                 logger.info("📁 Falling back to SQLite...")
@@ -193,9 +201,19 @@ class UltimateDatabaseManager:
     def _get_cursor(self):
         """Get database cursor"""
         if self.use_mysql:
-            if not self.connection or not self.connection.is_connected():
-                self.connection = mysql.connector.connect(**MYSQL_CONFIG)
-            return self.connection.cursor(dictionary=True)
+            try:
+                self.connection.ping(reconnect=True)
+            except:
+                self.connection = pymysql.connect(
+                    host=MYSQL_CONFIG["host"],
+                    user=MYSQL_CONFIG["user"],
+                    password=MYSQL_CONFIG["password"],
+                    database=MYSQL_CONFIG["database"],
+                    port=MYSQL_CONFIG.get("port", 3306),
+                    autocommit=True,
+                    cursorclass=pymysql.cursors.DictCursor
+                )
+            return self.connection.cursor()
         else:
             self.connection.row_factory = sqlite3.Row
             return self.connection.cursor()
