@@ -117,11 +117,14 @@ logger = logging.getLogger("EcoSchool")
 app = FastAPI(title="EcoSchool AI Ultimate", version="12.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
-# Load HTML files
+# Load HTML files with absolute paths
+BASE_DIR = Path(__file__).parent
+
 def load_html(filename: str) -> str:
-    path = find_file(filename)
+    path = BASE_DIR / filename
     if path.exists():
         return path.read_text(encoding='utf-8')
+    logger.error(f"❌ HTML file not found: {path}")
     return ""
 
 LOGIN_HTML = load_html("login.html")
@@ -2151,7 +2154,9 @@ async def smart_search(request: SearchRequest):
 @app.get("/dashboard")
 async def dashboard(request: Request):
     """🏠 Trang Dashboard chính (Enterprise Pro)"""
-    return templates.TemplateResponse("dashboard_enterprise.html", {"request": request})
+    if DASHBOARD_HTML:
+        return HTMLResponse(content=DASHBOARD_HTML)
+    return JSONResponse(status_code=404, content={"error": "dashboard_ultimate.html not found"})
 
 # Analytics
 @app.get("/api/analytics")
@@ -2245,6 +2250,7 @@ async def startup():
 # ============================================================================
 
 if __name__ == "__main__":
+    import uvicorn
     import os
     # Ưu tiên port 8080 local, nếu có môi trường (Cloud) thì dùng theo môi trường
     port = int(os.environ.get("PORT", 8080))
