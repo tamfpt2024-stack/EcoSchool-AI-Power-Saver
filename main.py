@@ -94,13 +94,20 @@ def find_file(filename: str) -> Path:
     local = Path(__file__).parent / filename
     return local if local.exists() else Path(filename)
 
+# Determine if running on Vercel
+IS_VERCEL = os.environ.get('VERCEL') == '1' or os.environ.get('PORT') is not None
+
+log_handlers = [logging.StreamHandler(sys.stdout)]
+if not IS_VERCEL:
+    try:
+        log_handlers.append(logging.FileHandler('ecoschool_ultimate.log', encoding='utf-8'))
+    except:
+        pass
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s [%(levelname)s] %(name)s: %(message)s',
-    handlers=[
-        logging.FileHandler('ecoschool_ultimate.log', encoding='utf-8'),
-        logging.StreamHandler(sys.stdout)
-    ]
+    handlers=log_handlers
 )
 # Ensure stdout is utf-8
 if sys.platform.startswith('win'):
@@ -195,8 +202,9 @@ class UltimateDatabaseManager:
                 self.db_type = "SQLite"
         
         if not self.use_mysql:
-            self.connection = sqlite3.connect("ecoschool_ultimate.db", check_same_thread=False)
-            logger.info("✅ Connected to SQLite")
+            sqlite_path = "/tmp/ecoschool_ultimate.db" if IS_VERCEL else "ecoschool_ultimate.db"
+            self.connection = sqlite3.connect(sqlite_path, check_same_thread=False)
+            logger.info(f"✅ Connected to SQLite ({sqlite_path})")
     
     def _get_cursor(self):
         """Get database cursor"""
